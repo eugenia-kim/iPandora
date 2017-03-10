@@ -1,0 +1,5 @@
+.DS_Store
+
+# Backup files
+*.swo
+*.swp
