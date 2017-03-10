@@ -10,3 +10,6 @@ iPandora/backend2
 % pip install Django
 % pip install django-webpack-loader
 % ./manage.py runserver
+
+
+https://github.com/owais/django-webpack-loader
