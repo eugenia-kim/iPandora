@@ -3,3 +3,5 @@
 # Backup files
 *.swo
 *.swp
+
+.idea/*

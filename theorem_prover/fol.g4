@@ -30,8 +30,21 @@ grammar fol;
 /*------------------------------------------------------------------
  * PARSER RULES
  *------------------------------------------------------------------*/
+
+step
+: intermediate justification EOF
+;
+
+intermediate
+: LINE condition
+;
+
+justification
+: (LINE | CASE) (SEP (LINE | CASE))*
+;
+
 condition
-: formula EOF
+: formula
 ;
 
 formula
@@ -113,21 +126,29 @@ VARIABLE
 : '?' (('a' .. 'z') | ('0' .. '9')) CHARACTER*
 ;
 
-
 CONSTANT
 : (('a' .. 'z') | ('0' .. '9')) CHARACTER*
 ;
-
 
 PREPOSITION
 : ('A' .. 'Z') CHARACTER*
 ;
 
+LINE
+: '~' ('0' .. '9')+
+;
+
+CASE
+: LPAREN LINE SEP LINE RPAREN
+;
+
+SEP
+: ','
+;
 
 fragment CHARACTER
 : ('0' .. '9' | 'a' .. 'z' | 'A' .. 'Z' | '_')
 ;
-
 
 WS
 : (' ' | '\t' | '\r' | '\n') + -> skip

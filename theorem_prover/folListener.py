@@ -8,6 +8,33 @@ else:
 # This class defines a complete listener for a parse tree produced by folParser.
 class folListener(ParseTreeListener):
 
+    # Enter a parse tree produced by folParser#step.
+    def enterStep(self, ctx:folParser.StepContext):
+        pass
+
+    # Exit a parse tree produced by folParser#step.
+    def exitStep(self, ctx:folParser.StepContext):
+        pass
+
+
+    # Enter a parse tree produced by folParser#intermediate.
+    def enterIntermediate(self, ctx:folParser.IntermediateContext):
+        pass
+
+    # Exit a parse tree produced by folParser#intermediate.
+    def exitIntermediate(self, ctx:folParser.IntermediateContext):
+        pass
+
+
+    # Enter a parse tree produced by folParser#justification.
+    def enterJustification(self, ctx:folParser.JustificationContext):
+        pass
+
+    # Exit a parse tree produced by folParser#justification.
+    def exitJustification(self, ctx:folParser.JustificationContext):
+        pass
+
+
     # Enter a parse tree produced by folParser#condition.
     def enterCondition(self, ctx:folParser.ConditionContext):
         pass
