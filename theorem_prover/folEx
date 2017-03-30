@@ -1,1 +1,1 @@
-~2 Forall ?x !P(x) ~0, ~1
+~2 Forall ?x !P(x) & Q(x) ~0, ~1

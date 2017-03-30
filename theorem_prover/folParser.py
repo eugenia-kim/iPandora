@@ -5,7 +5,7 @@ from io import StringIO
 
 def serializedATN():
     with StringIO() as buf:
-        buf.write("\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\20")
+        buf.write("\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\21")
         buf.write("r\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b")
         buf.write("\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4\r\t\r\4\16\t")
         buf.write("\16\3\2\3\2\3\2\3\2\3\3\3\3\3\3\3\4\3\4\3\4\7\4\'\n\4")
@@ -16,12 +16,12 @@ def serializedATN():
         buf.write("\13\f\13\16\13Z\13\13\3\13\3\13\3\f\3\f\5\f`\n\f\3\r\3")
         buf.write("\r\3\r\5\re\n\r\3\16\3\16\3\16\3\16\7\16k\n\16\f\16\16")
         buf.write("\16n\13\16\3\16\3\16\3\16\2\2\17\2\4\6\b\n\f\16\20\22")
-        buf.write("\24\26\30\32\2\5\3\2\r\16\3\2\b\t\3\2\n\13o\2\34\3\2\2")
+        buf.write("\24\26\30\32\2\5\3\2\r\17\3\2\b\t\3\2\n\13o\2\34\3\2\2")
         buf.write("\2\4 \3\2\2\2\6#\3\2\2\2\b+\3\2\2\2\n/\3\2\2\2\f\63\3")
         buf.write("\2\2\2\16;\3\2\2\2\20D\3\2\2\2\22P\3\2\2\2\24R\3\2\2\2")
         buf.write("\26_\3\2\2\2\30d\3\2\2\2\32f\3\2\2\2\34\35\5\4\3\2\35")
         buf.write("\36\5\6\4\2\36\37\7\2\2\3\37\3\3\2\2\2 !\7\r\2\2!\"\5")
-        buf.write("\b\5\2\"\5\3\2\2\2#(\t\2\2\2$%\7\17\2\2%\'\t\2\2\2&$\3")
+        buf.write("\b\5\2\"\5\3\2\2\2#(\t\2\2\2$%\7\20\2\2%\'\t\2\2\2&$\3")
         buf.write("\2\2\2\'*\3\2\2\2(&\3\2\2\2()\3\2\2\2)\7\3\2\2\2*(\3\2")
         buf.write("\2\2+,\5\n\6\2,\t\3\2\2\2-.\t\3\2\2.\60\7\n\2\2/-\3\2")
         buf.write("\2\2/\60\3\2\2\2\60\61\3\2\2\2\61\62\5\f\7\2\62\13\3\2")
@@ -32,12 +32,12 @@ def serializedATN():
         buf.write("\2\2DC\3\2\2\2DE\3\2\2\2EK\3\2\2\2FL\5\22\n\2GH\7\3\2")
         buf.write("\2HI\5\n\6\2IJ\7\4\2\2JL\3\2\2\2KF\3\2\2\2KG\3\2\2\2L")
         buf.write("\21\3\2\2\2MN\7\f\2\2NQ\5\24\13\2OQ\7\f\2\2PM\3\2\2\2")
-        buf.write("PO\3\2\2\2Q\23\3\2\2\2RS\7\3\2\2SX\5\26\f\2TU\7\17\2\2")
+        buf.write("PO\3\2\2\2Q\23\3\2\2\2RS\7\3\2\2SX\5\26\f\2TU\7\20\2\2")
         buf.write("UW\5\26\f\2VT\3\2\2\2WZ\3\2\2\2XV\3\2\2\2XY\3\2\2\2Y[")
         buf.write("\3\2\2\2ZX\3\2\2\2[\\\7\4\2\2\\\25\3\2\2\2]`\5\30\r\2")
         buf.write("^`\7\n\2\2_]\3\2\2\2_^\3\2\2\2`\27\3\2\2\2ab\7\13\2\2")
         buf.write("be\5\32\16\2ce\7\13\2\2da\3\2\2\2dc\3\2\2\2e\31\3\2\2")
-        buf.write("\2fg\7\3\2\2gl\t\4\2\2hi\7\17\2\2ik\t\4\2\2jh\3\2\2\2")
+        buf.write("\2fg\7\3\2\2gl\t\4\2\2hi\7\20\2\2ik\t\4\2\2jh\3\2\2\2")
         buf.write("kn\3\2\2\2lj\3\2\2\2lm\3\2\2\2mo\3\2\2\2nl\3\2\2\2op\7")
         buf.write("\4\2\2p\33\3\2\2\2\r(/8@DKPX_dl")
         return buf.getvalue()
@@ -55,11 +55,11 @@ class folParser ( Parser ):
 
     literalNames = [ "<INVALID>", "'('", "')'", "'&'", "'|'", "'!'", "'Forall'", 
                      "'Exists'", "<INVALID>", "<INVALID>", "<INVALID>", 
-                     "<INVALID>", "<INVALID>", "','" ]
+                     "<INVALID>", "'ass'", "<INVALID>", "','" ]
 
     symbolicNames = [ "<INVALID>", "LPAREN", "RPAREN", "AND", "OR", "NOT", 
                       "FORALL", "EXISTS", "VARIABLE", "CONSTANT", "PREPOSITION", 
-                      "LINE", "CASE", "SEP", "WS" ]
+                      "LINE", "ASS", "CASE", "SEP", "WS" ]
 
     RULE_step = 0
     RULE_intermediate = 1
@@ -91,9 +91,10 @@ class folParser ( Parser ):
     CONSTANT=9
     PREPOSITION=10
     LINE=11
-    CASE=12
-    SEP=13
-    WS=14
+    ASS=12
+    CASE=13
+    SEP=14
+    WS=15
 
     def __init__(self, input:TokenStream):
         super().__init__(input)
@@ -130,6 +131,12 @@ class folParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitStep" ):
                 listener.exitStep(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitStep" ):
+                return visitor.visitStep(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -178,6 +185,12 @@ class folParser ( Parser ):
             if hasattr( listener, "exitIntermediate" ):
                 listener.exitIntermediate(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitIntermediate" ):
+                return visitor.visitIntermediate(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -217,6 +230,12 @@ class folParser ( Parser ):
             else:
                 return self.getToken(folParser.CASE, i)
 
+        def ASS(self, i:int=None):
+            if i is None:
+                return self.getTokens(folParser.ASS)
+            else:
+                return self.getToken(folParser.ASS, i)
+
         def SEP(self, i:int=None):
             if i is None:
                 return self.getTokens(folParser.SEP)
@@ -234,6 +253,12 @@ class folParser ( Parser ):
             if hasattr( listener, "exitJustification" ):
                 listener.exitJustification(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitJustification" ):
+                return visitor.visitJustification(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -246,7 +271,7 @@ class folParser ( Parser ):
             self.enterOuterAlt(localctx, 1)
             self.state = 33
             _la = self._input.LA(1)
-            if not(_la==folParser.LINE or _la==folParser.CASE):
+            if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << folParser.LINE) | (1 << folParser.ASS) | (1 << folParser.CASE))) != 0)):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
@@ -259,7 +284,7 @@ class folParser ( Parser ):
                 self.match(folParser.SEP)
                 self.state = 35
                 _la = self._input.LA(1)
-                if not(_la==folParser.LINE or _la==folParser.CASE):
+                if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << folParser.LINE) | (1 << folParser.ASS) | (1 << folParser.CASE))) != 0)):
                     self._errHandler.recoverInline(self)
                 else:
                     self._errHandler.reportMatch(self)
@@ -296,6 +321,12 @@ class folParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitCondition" ):
                 listener.exitCondition(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitCondition" ):
+                return visitor.visitCondition(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -345,6 +376,12 @@ class folParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitFormula" ):
                 listener.exitFormula(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitFormula" ):
+                return visitor.visitFormula(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -411,6 +448,12 @@ class folParser ( Parser ):
             if hasattr( listener, "exitDisjunction" ):
                 listener.exitDisjunction(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitDisjunction" ):
+                return visitor.visitDisjunction(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -472,6 +515,12 @@ class folParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitConjunction" ):
                 listener.exitConjunction(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitConjunction" ):
+                return visitor.visitConjunction(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -538,6 +587,12 @@ class folParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitNegation" ):
                 listener.exitNegation(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitNegation" ):
+                return visitor.visitNegation(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -607,6 +662,12 @@ class folParser ( Parser ):
             if hasattr( listener, "exitPredicate" ):
                 listener.exitPredicate(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitPredicate" ):
+                return visitor.visitPredicate(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -671,6 +732,12 @@ class folParser ( Parser ):
             if hasattr( listener, "exitPredicateTuple" ):
                 listener.exitPredicateTuple(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitPredicateTuple" ):
+                return visitor.visitPredicateTuple(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -731,6 +798,12 @@ class folParser ( Parser ):
             if hasattr( listener, "exitTerm" ):
                 listener.exitTerm(self)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitTerm" ):
+                return visitor.visitTerm(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -786,6 +859,12 @@ class folParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitFunction" ):
                 listener.exitFunction(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitFunction" ):
+                return visitor.visitFunction(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -855,6 +934,12 @@ class folParser ( Parser ):
         def exitRule(self, listener:ParseTreeListener):
             if hasattr( listener, "exitFunctionTuple" ):
                 listener.exitFunctionTuple(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitFunctionTuple" ):
+                return visitor.visitFunctionTuple(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 

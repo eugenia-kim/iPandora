@@ -3,11 +3,18 @@ from antlr4 import *
 from folLexer import folLexer
 from folParser import folParser
 from folListener import folListener
+from folVisitor import folVisitor
 
-class folPrinter(folListener):
-    def enterStep(self, ctx):
+class folPrinter(folVisitor):
+
+    # Visit a parse tree produced by folParser#step.
+    def visitStep(self, ctx: folParser.StepContext):
         print("hi")
+        return self.visitChildren(ctx)
 
+    def visitConjunction(self, ctx: folParser.ConjunctionContext):
+
+        return self.visitChilren(ctx)
 def main(argv):
     input = FileStream(argv[1])
     lexer = folLexer(input)
@@ -16,9 +23,7 @@ def main(argv):
 
     tree = parser.step()
     printer = folPrinter()
-    walker = ParseTreeWalker()
-    walker.walk(printer, tree)
-    print("done")
+    printer.visit(tree)
 
 if __name__ == '__main__':
     main(sys.argv)
