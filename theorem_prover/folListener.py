@@ -53,6 +53,15 @@ class folListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by folParser#implication.
+    def enterImplication(self, ctx:folParser.ImplicationContext):
+        pass
+
+    # Exit a parse tree produced by folParser#implication.
+    def exitImplication(self, ctx:folParser.ImplicationContext):
+        pass
+
+
     # Enter a parse tree produced by folParser#disjunction.
     def enterDisjunction(self, ctx:folParser.DisjunctionContext):
         pass

@@ -48,7 +48,11 @@ condition
 ;
 
 formula
-: ((FORALL | EXISTS) VARIABLE)? disjunction
+: ((FORALL | EXISTS) VARIABLE)? implication
+;
+
+implication
+: disjunction (IMPLIES disjunction)*
 ;
 
 disjunction
@@ -96,6 +100,9 @@ RPAREN
 : ')'
 ;
 
+IMPLIES
+: '->'
+;
 
 AND
 : '&'

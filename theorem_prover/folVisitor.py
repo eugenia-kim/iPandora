@@ -34,6 +34,11 @@ class folVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by folParser#implication.
+    def visitImplication(self, ctx:folParser.ImplicationContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by folParser#disjunction.
     def visitDisjunction(self, ctx:folParser.DisjunctionContext):
         return self.visitChildren(ctx)
