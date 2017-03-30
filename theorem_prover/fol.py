@@ -2,7 +2,7 @@ import sys
 from antlr4 import *
 from folLexer import folLexer
 from folParser import folParser
-from folListener import folListener
+#from folListener import folListener
 from folVisitor import folVisitor
 
 class folPrinter(folVisitor):
@@ -12,9 +12,6 @@ class folPrinter(folVisitor):
         print("hi")
         return self.visitChildren(ctx)
 
-    def visitConjunction(self, ctx: folParser.ConjunctionContext):
-
-        return self.visitChilren(ctx)
 def main(argv):
     input = FileStream(argv[1])
     lexer = folLexer(input)
