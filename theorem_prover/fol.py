@@ -4,6 +4,7 @@ from folLexer import folLexer
 from folParser import folParser
 #from folListener import folListener
 from folVisitor import folVisitor
+from functools import *
 
 class folPrinter(folVisitor):
 
@@ -23,6 +24,10 @@ class folPrinter(folVisitor):
 
     def visitIntermediate(self, ctx:folParser.IntermediateContext):
         return self.visit(ctx.condition())
+
+    def visitImplication(self, ctx:folParser.ImplicationContext):
+        disjunctionList = map((lambda d: self.visitDisjunction(d)), ctx.disjunction())
+        return reduce((lambda a, b: "Implies(" + a + ", " + b + ")"), disjunctionList)
 
 
 def main(argv):
