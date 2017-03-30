@@ -20,6 +20,7 @@ iPandora/backend2
 Antlr4 for python
 ```
 % antlr4 -Dlanguage=Python3 fol.g4 
+% python fol.g4 (test file)
 ```
 Antlr4 for testing
 ```
