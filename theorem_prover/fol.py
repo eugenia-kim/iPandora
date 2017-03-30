@@ -9,8 +9,21 @@ class folPrinter(folVisitor):
 
     # Visit a parse tree produced by folParser#step.
     def visitStep(self, ctx: folParser.StepContext):
-        print("hi")
-        return self.visitChildren(ctx)
+        return self.visit(ctx.intermediate())
+
+    def visitNegation(self, ctx:folParser.NegationContext):
+        if ctx.NOT() is None:
+            return self.visitChildren(ctx)
+        else:
+            children = self.visitChildren(ctx)
+            return "Not(" + children + ")"
+
+    def visitPredicate(self, ctx:folParser.PredicateContext):
+        return ctx.PREPOSITION().getText()
+
+    def visitIntermediate(self, ctx:folParser.IntermediateContext):
+        return self.visit(ctx.condition())
+
 
 def main(argv):
     input = FileStream(argv[1])
@@ -20,7 +33,7 @@ def main(argv):
 
     tree = parser.step()
     printer = folPrinter()
-    printer.visit(tree)
+    print(printer.visit(tree))
 
 if __name__ == '__main__':
     main(sys.argv)
