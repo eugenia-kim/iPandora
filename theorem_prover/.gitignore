@@ -3,3 +3,6 @@
 __pycache__/
 
 z3test*.py
+
+folParser.py
+folLexer.py
