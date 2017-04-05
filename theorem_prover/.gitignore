@@ -6,3 +6,5 @@ z3test*.py
 
 folParser.py
 folLexer.py
+folVisitor.py
+folListener.py
