@@ -8,3 +8,4 @@ folParser.py
 folLexer.py
 folVisitor.py
 folListener.py
+*.tokens

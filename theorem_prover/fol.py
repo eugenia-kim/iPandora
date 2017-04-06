@@ -22,12 +22,14 @@ class folPrinter(folVisitor):
 
     def visitNegation(self, ctx: folParser.NegationContext):
         print("Negation")
-        if ctx.NOT() is None:
-            print("without !")
-            return self.visitChildren(ctx)
+        children = None
+        if ctx.formula():
+            children = self.visit(ctx.formula())
         else:
-            print("with !")
-            children = self.visitChildren(ctx)
+            children = self.visit(ctx.predicate())
+        if ctx.NOT() is None:
+            return children
+        else:
             return "Not(" + children + ")"
 
     def visitPredicate(self, ctx: folParser.PredicateContext):
