@@ -2,9 +2,10 @@ import sys
 from antlr4 import *
 from folLexer import folLexer
 from folParser import folParser
-#from folListener import folListener
+#from fol_listener import fol_listener
 from folVisitor import folVisitor
 from functools import *
+from z3 import *
 
 class folPrinter(folVisitor):
     # Visit a parse tree produced by folParser#step.
@@ -30,14 +31,16 @@ class folPrinter(folVisitor):
         if ctx.NOT() is None:
             return children
         else:
-            return "Not(" + children + ")"
+            # return "Not(" + children + ")"
+            return Not(children)
 
     def visitPredicate(self, ctx: folParser.PredicateContext):
         children = self.visitChildren(ctx)
         if children:
             return ctx.PREPOSITION().getText() + children
         else:
-            return ctx.PREPOSITION().getText()
+            #return ctx.PREPOSITION().getText()
+            return Bool(ctx.PREPOSITION().getText())
 
     def visitPredicateTuple(self, ctx: folParser.PredicateTupleContext):
         tuple_list = map((lambda t: self.visit(t)), ctx.term())
@@ -58,8 +61,9 @@ class folPrinter(folVisitor):
             return self.visit(ctx.disjunction(0))
         else:
             print("yes ->")
-            disjunctionList = map((lambda d: self.visit(d)), ctx.disjunction())
-            return reduce((lambda a, b: "Implies(" + a + ", " + b + ")"), disjunctionList)
+            disjunction_list = map((lambda d: self.visit(d)), ctx.disjunction())
+            #return reduce((lambda a, b: "Implies(" + a + ", " + b + ")"), disjunction_list)
+            return reduce((lambda a, b: Implies(a, b)), disjunction_list)
 
     def visitDisjunction(self, ctx: folParser.DisjunctionContext):
         print("Disjunction")
@@ -68,8 +72,9 @@ class folPrinter(folVisitor):
             return self.visit(ctx.conjunction(0))
         else:
             print("yes |")
-            conjunctionList = map((lambda c: self.visit(c)), ctx.conjunction())
-            return "Or(" + reduce((lambda a, b: a + ", " + b), conjunctionList) + ")"
+            conjunction_list = map((lambda c: self.visit(c)), ctx.conjunction())
+            #return "Or(" + reduce((lambda a, b: a + ", " + b), conjunction_list) + ")"
+            return Or(*conjunction_list)
 
     def visitConjunction(self, ctx: folParser.ConjunctionContext):
         print("Conjunction")
@@ -78,8 +83,9 @@ class folPrinter(folVisitor):
             return self.visit(ctx.negation(0))
         else:
             print("yes &")
-            negationList = map((lambda n: self.visit(n)), ctx.negation())
-            return "And(" + reduce((lambda a, b: a + ", " + b), negationList) + ")"
+            negation_list = map((lambda n: self.visit(n)), ctx.negation())
+            #return "And(" + reduce((lambda a, b: a + ", " + b), negation_list) + ")"
+            return And(*negation_list)
 
     def __list_to_string(self, list):
         return ', '.join(map(str, list))
@@ -92,7 +98,7 @@ def main(argv):
 
     tree = parser.step()
     printer = folPrinter()
-    print(printer.visit(tree))
+    print(str(printer.visit(tree)))
 
 if __name__ == '__main__':
     main(sys.argv)
