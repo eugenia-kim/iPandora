@@ -7,7 +7,11 @@ from folVisitor import folVisitor
 from functools import *
 from z3 import *
 
-class folPrinter(folVisitor):
+class z3Builder(folVisitor):
+
+    def __init__(self):
+        self.predicate_map = dict()
+
     # Visit a parse tree produced by folParser#step.
     def visitStep(self, ctx: folParser.StepContext):
         return self.visit(ctx.intermediate())
@@ -39,8 +43,13 @@ class folPrinter(folVisitor):
         if children:
             return ctx.PREPOSITION().getText() + children
         else:
+            predicate = self.predicate_map.get(ctx.PREPOSITION().getText())
+            if predicate is None:
+                predicate = Bool(ctx.PREPOSITION().getText())
+                self.predicate_map[ctx.PREPOSITION().getText()] = predicate
+            return predicate
             #return ctx.PREPOSITION().getText()
-            return Bool(ctx.PREPOSITION().getText())
+            #return Bool(ctx.PREPOSITION().getText())
 
     def visitPredicateTuple(self, ctx: folParser.PredicateTupleContext):
         tuple_list = map((lambda t: self.visit(t)), ctx.term())
@@ -97,7 +106,7 @@ def main(argv):
     parser = folParser(stream)
 
     tree = parser.step()
-    printer = folPrinter()
+    printer = z3Builder()
     print(str(printer.visit(tree)))
 
 if __name__ == '__main__':
