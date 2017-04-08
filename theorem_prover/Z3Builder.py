@@ -7,7 +7,7 @@ from folVisitor import folVisitor
 from functools import *
 from z3 import *
 
-class z3Builder(folVisitor):
+class Z3Builder(folVisitor):
 
     def __init__(self):
         self.predicate_map = dict()
@@ -106,7 +106,7 @@ def main(argv):
     parser = folParser(stream)
 
     tree = parser.step()
-    printer = z3Builder()
+    printer = Z3Builder()
     print(str(printer.visit(tree)))
 
 if __name__ == '__main__':
