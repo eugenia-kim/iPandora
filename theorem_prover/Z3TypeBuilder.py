@@ -3,7 +3,6 @@ from antlr4 import *
 from folTypeLexer import folTypeLexer
 from folTypeParser import folTypeParser
 from folTypeVisitor import folTypeVisitor
-from functools import *
 from z3 import *
 
 class Z3TypeBuilder(folTypeVisitor):
@@ -14,7 +13,7 @@ class Z3TypeBuilder(folTypeVisitor):
             this is only for predicates not propositions as it is not necessary to declare propositions' types
         '''
         # from user's type to z3 type sort
-        self.type_map = dict()
+        self.__type_map = dict()
 
         # from user's predicate type to z3 function
         self.predicate_map = dict()
@@ -59,10 +58,10 @@ class Z3TypeBuilder(folTypeVisitor):
         elif ctx.BOOL():
             return BoolSort()
         else:
-            type = self.type_map.get(ctx.TYPE().getText()[1:])
+            type = self.__type_map.get(ctx.TYPE().getText()[1:])
             if type is None:
                 type = DeclareSort(ctx.TYPE().getText()[1:])
-                self.type_map[ctx.TYPE().getText()[1:]] = type
+                self.__type_map[ctx.TYPE().getText()[1:]] = type
             return type
 
     def visitInputFile(self, file):

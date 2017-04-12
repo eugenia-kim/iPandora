@@ -40,7 +40,7 @@ intermediate
 ;
 
 justification
-: (LINE | CASE | ASS) (SEP (LINE | CASE | ASS))*
+: (LINE | CASE | ASS) (SEP (LINE | CASE | ASS | GIVEN | TOSHOW))*
 ;
 
 condition
@@ -143,6 +143,14 @@ PREPOSITION
 
 LINE
 : '~' ('0' .. '9')+
+;
+
+GIVEN
+: 'given'
+;
+
+TOSHOW
+: 'toShow'
 ;
 
 ASS

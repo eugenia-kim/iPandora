@@ -131,9 +131,6 @@ class Z3StepBuilder(folVisitor):
        if self.term_map.get(name) is None:
            self.term_map[name] = z3
 
-    def __list_to_string(self, list):
-        return ', '.join(map(str, list))
-
     def visitInputFile(self, file):
         lexer = folLexer(file)
         stream = CommonTokenStream(lexer)
