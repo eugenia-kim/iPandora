@@ -16,16 +16,17 @@ class Z3TypeBuilder(folTypeVisitor):
         # from user's type to z3 type sort
         self.type_map = dict()
 
-        # from user's predicate type to z3's function type
+        # from user's predicate type to z3 function
         self.predicate_map = dict()
+
+        # predicate tuple's arguments' z3 type sorts
+        self.param_map = dict()
 
     # Visit a parse tree produced by folTypeParser#init.
     def visitInit(self, ctx: folTypeParser.InitContext):
         print("visitInit")
-        self.visitChildren(ctx)
-        #declaration_list = list(map((lambda d: self.visit(d), print("done")), ctx.declaration()))
-        #TODO: figure out why below line is working but not the line above
-        self.visit(ctx.declaration(0))
+        for d in ctx.declaration():
+            self.visit(d)
         for k, v in self.predicate_map.items():
             print("key and val")
             print(k, v)
@@ -36,6 +37,8 @@ class Z3TypeBuilder(folTypeVisitor):
         declaration = self.predicate_map.get(ctx.PREPOSITION().getText())
         if declaration is None:
             children = self.visit(ctx.predicateType())
+            self.param_map[ctx.PREPOSITION().getText()] = children
+            # append BoolSort() after putting in param_map
             children.append(BoolSort())
             print(children)
             declaration = Function(ctx.PREPOSITION().getText(), *children)
