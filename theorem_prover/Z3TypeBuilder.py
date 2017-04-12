@@ -65,15 +65,17 @@ class Z3TypeBuilder(folTypeVisitor):
                 self.type_map[ctx.TYPE().getText()[1:]] = type
             return type
 
-def main(argv):
-    input = FileStream(argv[1])
-    lexer = folTypeLexer(input)
-    stream = CommonTokenStream(lexer)
-    parser = folTypeParser(stream)
+    def visitInputFile(self, file):
+        lexer = folTypeLexer(file)
+        stream = CommonTokenStream(lexer)
+        parser = folTypeParser(stream)
 
-    tree = parser.init()
-    printer = Z3TypeBuilder()
-    printer.visit(tree)
+        tree = parser.init()
+        self.visit(tree)
+
+def main(argv):
+    type_builder = Z3TypeBuilder()
+    type_builder.visitInputFile(FileStream(argv[1]))
 
 if __name__ == '__main__':
     main(sys.argv)
