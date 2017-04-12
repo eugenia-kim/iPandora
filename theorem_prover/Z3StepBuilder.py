@@ -61,16 +61,15 @@ class Z3StepBuilder(folVisitor):
             # get z3 predicate function
             predicate = self.type_builder.predicate_map.get(ctx.PREPOSITION().getText())
 
-            # get z3 parameters
-            z3_param = list(map((lambda tuple: Consts(tuple[0], tuple[1])), zip(children, param_type)))
-            print(z3_param)
-            print(Consts('x', IntSort()))
+            # get z3 constants
+            z3_consts = list(map((lambda tuple: Const(tuple[0], tuple[1])), zip(children, param_type)))
 
             # add z3 params to term_map
-            map((lambda name, z3_param: self.__add_term_map(name, z3_param)), zip(children, z3_param))
-            print("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHh")
-            print(str(predicate(*z3_param)))
-            return predicate(*z3_param)
+            print(list(zip(children, z3_consts)))
+            for name, param in zip(children, z3_consts):
+                self.__add_term_map(name, param)
+
+            return predicate(*z3_consts)
             # return ctx.PREPOSITION().getText() + children
         else:
             # simple predicate Bool type
