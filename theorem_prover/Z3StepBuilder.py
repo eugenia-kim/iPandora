@@ -5,10 +5,7 @@ from folParser import folParser
 from folVisitor import folVisitor
 from functools import *
 from z3 import *
-# TODO: figure out how python's import works
 from Z3TypeBuilder import Z3TypeBuilder
-from folTypeLexer import folTypeLexer
-from folTypeParser import folTypeParser
 
 class Z3StepBuilder(folVisitor):
 
@@ -138,25 +135,23 @@ class Z3StepBuilder(folVisitor):
     def __list_to_string(self, list):
         return ', '.join(map(str, list))
 
+    def visitInputFile(self, file):
+        lexer = folLexer(file)
+        stream = CommonTokenStream(lexer)
+        parser = folParser(stream)
+
+        tree = parser.step()
+        print(str(self.visit(tree)))
+
 def main(argv):
 
     type_input = FileStream(argv[1])
-    type_lexer = folTypeLexer(type_input)
-    type_stream = CommonTokenStream(type_lexer)
-    type_parser = folTypeParser(type_stream)
-
-    type_tree = type_parser.init()
     type_builder = Z3TypeBuilder()
-    type_builder.visit(type_tree)
+    type_builder.visitInputFile(type_input)
 
     step_input = FileStream(argv[2])
-    step_lexer = folLexer(step_input)
-    step_stream = CommonTokenStream(step_lexer)
-    step_parser = folParser(step_stream)
-
-    step_tree = step_parser.step()
     step_builder = Z3StepBuilder(type_builder)
-    print(str(step_builder.visit(step_tree)))
+    step_builder.visitInputFile(step_input)
 
 if __name__ == '__main__':
     main(sys.argv)
