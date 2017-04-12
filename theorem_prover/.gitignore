@@ -1,11 +1,13 @@
-/folJava/*
-
+/folJava/
+/folTypeJava/
 __pycache__/
 
 z3test*.py
 
-folParser.py
-folLexer.py
-folVisitor.py
-folListener.py
+*Parser.py
+*Lexer.py
+*Visitor.py
+*Listener.py
 *.tokens
+
+QnA
