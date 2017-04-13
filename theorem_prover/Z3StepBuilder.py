@@ -29,7 +29,39 @@ class Z3StepBuilder(folVisitor):
 
     # Visit a parse tree produced by folParser#step.
     def visitStep(self, ctx: folParser.StepContext):
-        return self.visit(ctx.intermediate())
+        justification = self.visit(ctx.justification())
+        condition = self.visit(ctx.intermediate())
+
+        if justification == "given":
+            self.given = condition
+        elif justification == "toShow":
+            self.toShow = condition
+        # TODO: elif justification == "ass":
+        return condition
+
+    def visitIntermediate(self, ctx: folParser.IntermediateContext):
+        print("Intermediate")
+        condition = self.visit(ctx.condition())
+        self.step_map[ctx.LINE().getText()[1:]] = condition
+        return condition
+
+    def visitJustification(self, ctx: folParser.JustificationContext):
+        if ctx.line():
+            line_list = list(map((lambda l: self.visit(l)), ctx.line()))
+            return line_list
+        elif ctx.GIVEN():
+            return ctx.GIVEN().getText()[1:]
+        elif ctx.TOSHOW():
+            return ctx.TOSHOW().getText()[1:]
+        elif ctx.ASS():
+            return ctx.ASS().getText()[1:]
+
+    def visitLine(self, ctx: folParser.LineContext):
+        # TODO: add CASE once debugged in fol.g4
+        return ctx.LINE().getText()[1:]
+
+    def visitCondition(self, ctx: folParser.ConditionContext):
+        return self.visit(ctx.formula())
 
     def visitFormula(self, ctx: folParser.FormulaContext):
         children = self.visit(ctx.implication())
@@ -43,6 +75,39 @@ class Z3StepBuilder(folVisitor):
             term = self.term_map.get(ctx.VARIABLE().getText()[1:])
             return Exists(term, children)
             #return "Exists(" + ctx.VARIABLE().getText()[1:] + ", " + children + ")"
+
+    def visitImplication(self, ctx: folParser.ImplicationContext):
+        print("Implication")
+        if not ctx.IMPLIES():
+            print("no ->")
+            return self.visit(ctx.disjunction(0))
+        else:
+            print("yes ->")
+            disjunction_list = map((lambda d: self.visit(d)), ctx.disjunction())
+            #return reduce((lambda a, b: "Implies(" + a + ", " + b + ")"), disjunction_list)
+            return reduce((lambda a, b: Implies(a, b)), disjunction_list)
+
+    def visitDisjunction(self, ctx: folParser.DisjunctionContext):
+        print("Disjunction")
+        if not ctx.OR():
+            print("no |")
+            return self.visit(ctx.conjunction(0))
+        else:
+            print("yes |")
+            conjunction_list = map((lambda c: self.visit(c)), ctx.conjunction())
+            #return "Or(" + reduce((lambda a, b: a + ", " + b), conjunction_list) + ")"
+            return Or(*conjunction_list)
+
+    def visitConjunction(self, ctx: folParser.ConjunctionContext):
+        print("Conjunction")
+        if not ctx.AND():
+            print("no &")
+            return self.visit(ctx.negation(0))
+        else:
+            print("yes &")
+            negation_list = map((lambda n: self.visit(n)), ctx.negation())
+            #return "And(" + reduce((lambda a, b: a + ", " + b), negation_list) + ")"
+            return And(*negation_list)
 
     def visitNegation(self, ctx: folParser.NegationContext):
         print("Negation")
@@ -96,43 +161,6 @@ class Z3StepBuilder(folVisitor):
     def visitTerm(self, ctx: folParser.TermContext):
         # TODO: function case
         return ctx.VARIABLE().getText()[1:]
-
-    def visitIntermediate(self, ctx: folParser.IntermediateContext):
-        print("Intermediate")
-        return self.visit(ctx.condition())
-
-    def visitImplication(self, ctx: folParser.ImplicationContext):
-        print("Implication")
-        if not ctx.IMPLIES():
-            print("no ->")
-            return self.visit(ctx.disjunction(0))
-        else:
-            print("yes ->")
-            disjunction_list = map((lambda d: self.visit(d)), ctx.disjunction())
-            #return reduce((lambda a, b: "Implies(" + a + ", " + b + ")"), disjunction_list)
-            return reduce((lambda a, b: Implies(a, b)), disjunction_list)
-
-    def visitDisjunction(self, ctx: folParser.DisjunctionContext):
-        print("Disjunction")
-        if not ctx.OR():
-            print("no |")
-            return self.visit(ctx.conjunction(0))
-        else:
-            print("yes |")
-            conjunction_list = map((lambda c: self.visit(c)), ctx.conjunction())
-            #return "Or(" + reduce((lambda a, b: a + ", " + b), conjunction_list) + ")"
-            return Or(*conjunction_list)
-
-    def visitConjunction(self, ctx: folParser.ConjunctionContext):
-        print("Conjunction")
-        if not ctx.AND():
-            print("no &")
-            return self.visit(ctx.negation(0))
-        else:
-            print("yes &")
-            negation_list = map((lambda n: self.visit(n)), ctx.negation())
-            #return "And(" + reduce((lambda a, b: a + ", " + b), negation_list) + ")"
-            return And(*negation_list)
 
     def __add_term_map(self, name, z3):
        if self.term_map.get(name) is None:

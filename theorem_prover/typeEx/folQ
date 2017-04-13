@@ -1,2 +1,2 @@
 P : _T x _T -> _Bool
-Q: _T -> Bool
+Q: _T -> _Bool
