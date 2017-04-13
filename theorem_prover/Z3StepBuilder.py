@@ -1,4 +1,5 @@
 import sys
+import argparse
 from antlr4 import *
 from folLexer import folLexer
 from folParser import folParser
@@ -139,13 +140,32 @@ class Z3StepBuilder(folVisitor):
         tree = parser.step()
         print(str(self.visit(tree)))
 
+def get_args():
+    parser = argparse.ArgumentParser(
+        description='Script builds z3 command from given proof steps and optional type declarations'
+    )
+
+    parser.add_argument(
+        '-d', '--declaration', type=str, help='Declaration file path', required=False
+    )
+
+    parser.add_argument(
+        '-s', '--step', type=str, help='Step file path', required=True
+    )
+
+    return parser.parse_args()
+
 def main(argv):
 
-    type_input = FileStream(argv[1])
-    type_builder = Z3TypeBuilder()
-    type_builder.visitInputFile(type_input)
+    args = get_args()
 
-    step_input = FileStream(argv[2])
+    type_builder = Z3TypeBuilder()
+
+    if args.declaration:
+        type_input = FileStream(args.declaration)
+        type_builder.visitInputFile(type_input)
+
+    step_input = FileStream(args.step)
     step_builder = Z3StepBuilder(type_builder)
     step_builder.visitInputFile(step_input)
 
