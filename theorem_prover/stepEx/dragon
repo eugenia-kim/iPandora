@@ -1,1 +1,1 @@
-~2 Forall ?x (Exists ?y (Friend(?x, ?y) -> Happy(?x))) ~0
+~1 Forall ?x (Exists ?y (Friend(?x, ?y) -> Happy(?x))) ~given

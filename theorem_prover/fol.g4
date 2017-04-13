@@ -40,7 +40,11 @@ intermediate
 ;
 
 justification
-: (LINE | CASE | ASS) (SEP (LINE | CASE | ASS | GIVEN | TOSHOW))*
+: GIVEN | TOSHOW | ASS | (line (SEP line)*)
+;
+
+line
+: LINE // | CASE
 ;
 
 condition
@@ -89,7 +93,6 @@ function
 functionTuple
 : LPAREN (CONSTANT | VARIABLE) (',' (CONSTANT | VARIABLE))* RPAREN
 ;
-
 
 LPAREN
 : '('
@@ -146,21 +149,23 @@ LINE
 ;
 
 GIVEN
-: 'given'
+: '~given'
 ;
 
 TOSHOW
-: 'toShow'
+: '~toShow'
 ;
 
 ASS
-: 'ass'
+: '~ass'
 ;
 
+//TODO: this is not working without '~' at the front.
+/*
 CASE
-: LPAREN LINE SEP LINE RPAREN
+: '~' LPAREN LINE SEP LINE RPAREN
 ;
-
+*/
 SEP
 : ','
 ;
