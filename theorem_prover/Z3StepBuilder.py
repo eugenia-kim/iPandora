@@ -36,7 +36,9 @@ class Z3StepBuilder(folVisitor):
             self.given = condition
         elif justification == "toShow":
             self.toShow = condition
-        # TODO: elif justification == "ass":
+        else:
+            print("LINE LIST!!!!")
+        # TODO: elif justification == "ass": and line_list
         return condition
 
     def visitIntermediate(self, ctx: folParser.IntermediateContext):
