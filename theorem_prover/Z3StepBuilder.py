@@ -11,6 +11,13 @@ from Z3TypeBuilder import Z3TypeBuilder
 class Z3StepBuilder(folVisitor):
 
     def __init__(self, type_builder):
+
+        self.given = None
+        self.toShow = None
+
+        # step_map = [line number. z3 formula]
+        self.step_map = dict()
+
         # proposition_map = [proposition_name, z3 Bool]
         self.proposition_map = dict()
 
@@ -51,9 +58,8 @@ class Z3StepBuilder(folVisitor):
             return Not(children)
 
     def visitPredicate(self, ctx: folParser.PredicateContext):
-        # TODO: change this to visit(ctx.predicateTuple())
-        children = self.visitChildren(ctx)
-        if children:
+        if ctx.predicateTuple():
+            tuple = self.visit(ctx.predicateTuple())
             # Predicate Tuple type
 
             # get z3 parameter types
@@ -63,11 +69,11 @@ class Z3StepBuilder(folVisitor):
             predicate = self.type_builder.predicate_map.get(ctx.PREPOSITION().getText())
 
             # get z3 constants
-            z3_consts = list(map((lambda tuple: Const(tuple[0], tuple[1])), zip(children, param_type)))
+            z3_consts = list(map((lambda tuple: Const(tuple[0], tuple[1])), zip(tuple, param_type)))
 
             # add z3 params to term_map
-            print(list(zip(children, z3_consts)))
-            for name, param in zip(children, z3_consts):
+            print(list(zip(tuple, z3_consts)))
+            for name, param in zip(tuple, z3_consts):
                 self.__add_term_map(name, param)
 
             return predicate(*z3_consts)
