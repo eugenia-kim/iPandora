@@ -66,6 +66,12 @@ class Z3StepBuilder(folVisitor):
         return self.visit(ctx.formula())
 
     def visitFormula(self, ctx: folParser.FormulaContext):
+        '''
+             need to check the term is not in the term_map before. (var name should be different for the good practice in the inner scope from the outer one)
+             set the term to unknown
+             and when visiting predicate, you encounter first x, so you check the map
+             AFTER I visit the implication.            
+        '''
         children = self.visit(ctx.implication())
         if ctx.VARIABLE() is None:
             return children
@@ -144,7 +150,7 @@ class Z3StepBuilder(folVisitor):
             predicate = self.type_builder.predicate_map.get(ctx.PREPOSITION().getText())
 
             # get z3 constants
-            z3_consts = list(map((lambda tuple: Const(tuple[0], tuple[1])), zip(tuple, param_type)))
+            z3_consts = list(map((lambda t: Const(t[0], t[1])), zip(tuple, param_type)))
 
             # add z3 params to term_map
             print(list(zip(tuple, z3_consts)))
