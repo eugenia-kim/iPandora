@@ -126,6 +126,14 @@ class Z3StepBuilder(folVisitor):
 
     def visitPredicate(self, ctx: folParser.PredicateContext):
         if ctx.predicateTuple():
+            '''
+                Green: _dragon -> _Bool
+                Forall ?x Green(?x)
+                tuple = [x]
+                param_type = [_dragonZ3]
+                predicate = Function('Green', _dragonZ3, BoolSort())
+                z3_consts = [Const(x, _dragonZ3)]
+            '''
             tuple = self.visit(ctx.predicateTuple())
             # Predicate Tuple type
 
