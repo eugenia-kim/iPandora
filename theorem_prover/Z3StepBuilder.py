@@ -24,8 +24,11 @@ class Z3StepBuilder(folVisitor):
         # Z3 Type Builder which has predicate_map and param_map
         self.type_builder = type_builder
 
-        # term_map = [term_name, z3 sort]
-        self.term_map = dict()
+        # var_map = [term_name, z3 sort] (bounded)
+        self.var_map = dict()
+
+        # constant_map = [term_name, z3 sort] (unbounded)
+        self.constant_map = dict()
 
     # Visit a parse tree produced by folParser#step.
     def visitStep(self, ctx: folParser.StepContext):
@@ -67,22 +70,34 @@ class Z3StepBuilder(folVisitor):
 
     def visitFormula(self, ctx: folParser.FormulaContext):
         '''
-             need to check the term is not in the term_map before. (var name should be different for the good practice in the inner scope from the outer one)
+             need to check the term is not in the var_map before. (var name should be different for the good practice in the inner scope from the outer one)
              set the term to unknown
              and when visiting predicate, you encounter first x, so you check the map
              AFTER I visit the implication.            
+             DFS so I need to remove the var after retrieving
         '''
+        if ctx.VARIABLE():
+            term = self.var_map.get(ctx.VARIABLE().getText()[1:])
+            if term:
+                # TODO: throw an error (bad practice to have the same bounded variable name in between levels of scopes
+                pass
+            else:
+                self.var_map[ctx.VARIABLE().getText()[1:]] = unknown
+
         children = self.visit(ctx.implication())
-        if ctx.VARIABLE() is None:
-            return children
-        elif ctx.FORALL():
-            term = self.term_map.get(ctx.VARIABLE().getText()[1:])
+
+        if ctx.FORALL():
+            term = self.var_map.get(ctx.VARIABLE().getText()[1:])
+            self.var_map.pop(ctx.VARIABLE().getText()[1:])
             return ForAll(term, children)
             # return "ForAll(" + ctx.VARIABLE().getText()[1:] + ", " + children + ")"
-        else:
-            term = self.term_map.get(ctx.VARIABLE().getText()[1:])
+        elif ctx.EXISTS():
+            term = self.var_map.get(ctx.VARIABLE().getText()[1:])
+            self.var_map.pop(ctx.VARIABLE().getText()[1:])
             return Exists(term, children)
             #return "Exists(" + ctx.VARIABLE().getText()[1:] + ", " + children + ")"
+        else:
+            return children
 
     def visitImplication(self, ctx: folParser.ImplicationContext):
         print("Implication")
@@ -152,10 +167,10 @@ class Z3StepBuilder(folVisitor):
             # get z3 constants
             z3_consts = list(map((lambda t: Const(t[0], t[1])), zip(tuple, param_type)))
 
-            # add z3 params to term_map
+            # add z3 params to var_map. If it's in the var_map, it's a bounded variable. If not, it's an error.
             print(list(zip(tuple, z3_consts)))
             for name, param in zip(tuple, z3_consts):
-                self.__add_term_map(name, param)
+                self.__add_var_map(name, param)
 
             return predicate(*z3_consts)
             # return ctx.PREPOSITION().getText() + children
@@ -175,12 +190,25 @@ class Z3StepBuilder(folVisitor):
         #return "(" + reduce((lambda a, b: a + ", " +  b), tuple_list) + ")"
 
     def visitTerm(self, ctx: folParser.TermContext):
-        # TODO: function case
-        return ctx.VARIABLE().getText()[1:]
+        if ctx.VARIABLE():
+            return ctx.VARIABLE().getText()[1:]
+        else:
+            return self.visit(ctx.function())
 
-    def __add_term_map(self, name, z3):
-       if self.term_map.get(name) is None:
-           self.term_map[name] = z3
+    def visitFunction(self, ctx:folParser.FunctionContext):
+        # TODO: functionTuple case
+        return ctx.CONSTANT().getText()
+
+    def __add_var_map(self, name, z3):
+        if self.var_map.get(name) is unknown:
+            self.var_map[name] = z3
+        elif self.var_map.get(name) != z3:
+            # TODO: throw an error type error
+            # {Green: _dragon, Friend: _human x _human. Forall ?x Green(?x) & (Forall ?y Friend(?x, ?y)) }
+            pass
+        else:
+            # TODO throw an error no variable declared {Green(?x)}
+            pass
 
     def visitInputFile(self, file):
         lexer = folLexer(file)
