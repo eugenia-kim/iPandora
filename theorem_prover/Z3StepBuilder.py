@@ -10,7 +10,7 @@ from Z3TypeBuilder import Z3TypeBuilder
 
 class Z3StepBuilder(folVisitor):
 
-    def __init__(self, type_builder):
+    def __init__(self, param_map = None, predicate_map = None):
 
         self.given = None
         self.toShow = None
@@ -22,7 +22,11 @@ class Z3StepBuilder(folVisitor):
         self.proposition_map = dict()
 
         # Z3 Type Builder which has predicate_map and param_map
-        self.type_builder = type_builder
+        # self.type_builder = type_builder
+
+        self.param_map = param_map
+
+        self.predicate_map = predicate_map
 
         # var_map = [term_name, z3 sort] (bounded)
         self.var_map = dict()
@@ -34,7 +38,6 @@ class Z3StepBuilder(folVisitor):
     def visitStep(self, ctx: folParser.StepContext):
         justification = self.visit(ctx.justification())
         condition = self.visit(ctx.intermediate())
-
         if justification == "given":
             self.given = condition
         elif justification == "toShow":
@@ -128,7 +131,7 @@ class Z3StepBuilder(folVisitor):
             return self.visit(ctx.negation(0))
         else:
             print("yes &")
-            negation_list = map((lambda n: self.visit(n)), ctx.negation())
+            negation_list = list(map((lambda n: self.visit(n)), ctx.negation()))
             #return "And(" + reduce((lambda a, b: a + ", " + b), negation_list) + ")"
             return And(*negation_list)
 
@@ -159,10 +162,10 @@ class Z3StepBuilder(folVisitor):
             # Predicate Tuple type
 
             # get z3 parameter types
-            param_type = self.type_builder.param_map.get(ctx.PREPOSITION().getText())
+            param_type = self.param_map.get(ctx.PREPOSITION().getText())
 
             # get z3 predicate function
-            predicate = self.type_builder.predicate_map.get(ctx.PREPOSITION().getText())
+            predicate = self.predicate_map.get(ctx.PREPOSITION().getText())
 
             # get z3 constants
             z3_consts = list(map((lambda t: Const(t[0], t[1])), zip(tuple, param_type)))
@@ -197,17 +200,28 @@ class Z3StepBuilder(folVisitor):
 
     def visitFunction(self, ctx:folParser.FunctionContext):
         # TODO: functionTuple case
+        constant = self.constant_map.get(ctx.CONSTANT().getText(), None)
+        if constant is None:
+            self.constant_map[ctx.CONSTANT().getText()] = unknown
         return ctx.CONSTANT().getText()
 
     def __add_var_map(self, name, z3):
-        if self.var_map.get(name) is unknown:
+        var = self.var_map.get(name, None)
+        const = self.constant_map.get(name, None)
+        if var is unknown:
+            print("Var is in the map: " + name)
             self.var_map[name] = z3
-        elif self.var_map.get(name) != z3:
+        elif const is unknown:
+            print("Constant is in the map: " + name)
+            self.constant_map[name] = z3
+        elif var is not None and var != z3:
             # TODO: throw an error type error
+            print("Type Error: " + name)
             # {Green: _dragon, Friend: _human x _human. Forall ?x Green(?x) & (Forall ?y Friend(?x, ?y)) }
             pass
         else:
-            # TODO throw an error no variable declared {Green(?x)}
+            # TODO: throw an error no variable declared {Green(?x)}
+            print("ERROR DETECTED: " + name)
             pass
 
     def visitInputFile(self, file):
@@ -236,15 +250,17 @@ def get_args():
 def main(argv):
 
     args = get_args()
+    param_map = dict()
+    predicate_map = dict()
 
-    type_builder = Z3TypeBuilder()
+    type_builder = Z3TypeBuilder(param_map, predicate_map)
 
     if args.declaration:
         type_input = FileStream(args.declaration)
         type_builder.visitInputFile(type_input)
 
     step_input = FileStream(args.step)
-    step_builder = Z3StepBuilder(type_builder)
+    step_builder = Z3StepBuilder(param_map, predicate_map)
     step_builder.visitInputFile(step_input)
 
 if __name__ == '__main__':

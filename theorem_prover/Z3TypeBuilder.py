@@ -7,7 +7,7 @@ from z3 import *
 
 class Z3TypeBuilder(folTypeVisitor):
 
-    def __init__(self):
+    def __init__(self, param_map, predicate_map):
 
         '''
             this is only for predicates not propositions as it is not necessary to declare propositions' types
@@ -16,10 +16,10 @@ class Z3TypeBuilder(folTypeVisitor):
         self.__type_map = dict()
 
         # from user's predicate type to z3 function
-        self.predicate_map = dict()
+        self.predicate_map = predicate_map
 
         # predicate tuple's arguments' z3 type sorts
-        self.param_map = dict()
+        self.param_map = param_map
 
     # Visit a parse tree produced by folTypeParser#init.
     def visitInit(self, ctx: folTypeParser.InitContext):

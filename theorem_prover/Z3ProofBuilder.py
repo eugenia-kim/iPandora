@@ -5,15 +5,44 @@ from Z3StepBuilder import Z3StepBuilder
 from Z3TypeBuilder import Z3TypeBuilder
 from antlr4 import *
 
+class Z3ProofBuilder():
+
+    def __init__(self, type_builder, step_builder):
+
+        # given condition in z3 formulas
+        self.givens= []
+
+        # toShow condition in z3 formula
+        self.toShow = None
+
+        self.type_builder = type_builder
+
+        self.step_builder = step_builder
+
+    def setTypes(self, declaration):
+        self.type_builder.visitInputFile(FileStream(declaration))
+
+    def setGiven(self, given):
+        z3_given = self.step_builder.visitInputFile(FileStream(given))
+        self.givens.append(z3_given)
+
+    def setToShow(self, toShow):
+        self.toShow = self.step_builder.visitInputFile(toShow)
+
+    def build(self):
+        return Z3Proof(self.givens, self.toShow, self.step_builder)
+
 class Z3Proof():
 
-    def __init__(self):
+    def __init__(self, given, toShow, step_builder):
 
         # given condition in z3 formula
-        self.given = None
+        self.given = given
 
-        # to Show condition in z3 formula
-        self.toShow = None
+        # toShow condition in z3 formula
+        self.toShow = toShow
+
+        self.step_builder = step_builder
 
         # step_map = [line number. z3 formula]
         self.step_map = dict()
@@ -38,7 +67,7 @@ def get_args():
     )
 
     parser.add_argument(
-        '-s', '--step', type=str, help='Step file path', required=True
+        '-s', '--step', type=str, help='Step file path', required=False
     )
 
     return parser.parse_args()
@@ -54,7 +83,9 @@ def main(argv):
         type_builder.visitInputFile(type_input)
 
     step_input = FileStream(args.step)
-    step_builder = Z3StepBuilder(type_builder)
+    step_builder = Z3StepBuilder(type_builder.param_map, type_builder.predicate_map)
+
+    proof_builder = Z3ProofBuilder()
     step_builder.visitInputFile(step_input)
 
 if __name__ == '__main__':
