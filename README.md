@@ -4,9 +4,8 @@ source activate ipandora
 
 iPandora/frontend
 ```
-% npm install
+% yarn install && yarn build
 
-% node_modules/.bin/webpack 
 ```
 
 iPandora/backend2
