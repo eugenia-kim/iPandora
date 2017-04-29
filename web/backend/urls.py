@@ -13,14 +13,11 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
-from django.contrib import admin
+from django.conf.urls import include, url
 from django.views.generic.base import TemplateView
-
-from .testviews import test_view, random_number
+from backend.api.urls import urlpatterns as api_patterns
 
 urlpatterns = [
-    url(r'^$', TemplateView.as_view(template_name='index.html'), name='index'),
-    url(r'^api/health/?$', test_view, name='healthcheck'),
-    url(r'^api/rand/?$', random_number, name='random number')
+    url(r'^api/', include(api_patterns)),
+    url(r'^', TemplateView.as_view(template_name='index.html'), name='index'),
 ]
