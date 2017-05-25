@@ -86,7 +86,7 @@ def main(argv):
     step_builder = Z3StepBuilder(type_builder.param_map, type_builder.predicate_map)
 
     proof_builder = Z3ProofBuilder()
-    step_builder.visitInputFile(step_input)
+    step = step_builder.visitInputFile(step_input)
 
 if __name__ == '__main__':
     main(sys.argv)

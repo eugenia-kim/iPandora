@@ -12,12 +12,6 @@ class Z3StepBuilder(folVisitor):
 
     def __init__(self, param_map = None, predicate_map = None):
 
-        self.given = None
-        self.toShow = None
-
-        # step_map = [line number. z3 formula]
-        self.step_map = dict()
-
         # proposition_map = [proposition_name, z3 Bool]
         self.proposition_map = dict()
 
@@ -37,21 +31,20 @@ class Z3StepBuilder(folVisitor):
     # Visit a parse tree produced by folParser#step.
     def visitStep(self, ctx: folParser.StepContext):
         justification = self.visit(ctx.justification())
-        condition = self.visit(ctx.intermediate())
+        intermediate = self.visit(ctx.intermediate())
         if justification == "given":
-            self.given = condition
+            self.given = intermediate
         elif justification == "toShow":
-            self.toShow = condition
+            self.toShow = intermediate
         else:
             print("LINE LIST!!!!")
         # TODO: elif justification == "ass": and line_list
-        return condition
+        return intermediate, justification
 
     def visitIntermediate(self, ctx: folParser.IntermediateContext):
         print("Intermediate")
         condition = self.visit(ctx.condition())
-        self.step_map[ctx.LINE().getText()[1:]] = condition
-        return condition
+        return ctx.LINE().getText()[1:], condition
 
     def visitJustification(self, ctx: folParser.JustificationContext):
         if ctx.line():
@@ -230,7 +223,7 @@ class Z3StepBuilder(folVisitor):
         parser = folParser(stream)
 
         tree = parser.step()
-        print(str(self.visit(tree)))
+        return self.visit(tree);
 
 def get_args():
     parser = argparse.ArgumentParser(
@@ -261,7 +254,7 @@ def main(argv):
 
     step_input = FileStream(args.step)
     step_builder = Z3StepBuilder(param_map, predicate_map)
-    step_builder.visitInputFile(step_input)
+    print(step_builder.visitInputFile(step_input))
 
 if __name__ == '__main__':
     main(sys.argv)
