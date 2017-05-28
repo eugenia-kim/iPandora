@@ -1,10 +1,19 @@
-import { ADD_GIVEN } from "../constants/type"
+import * as type from "../constants/type"
 
 export const addGiven = (text: string) => {
   return {
-    type: ADD_GIVEN,
+    type: type.ADD_GIVEN,
     payload: {
       text,
+    }
+  }
+}
+
+export const errorGiven = (error: string) => {
+  return {
+    type: type.ERR_GIVEN,
+    payload: {
+      error,
     }
   }
 }

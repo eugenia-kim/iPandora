@@ -1,6 +1,6 @@
 import * as React from "react";
 import {RouteComponentProps} from "react-router";
-import GivenInputBox from "../containers/given";
+import GivenInputBox from "../containers/GivenInputBox";
 
 export interface ProofUrlParams {
   proofId: string;

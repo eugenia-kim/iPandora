@@ -3,7 +3,8 @@ import {AnchorButton, InputGroup} from "@blueprintjs/core";
 import {assign} from "lodash";
 
 export interface AddInputBoxProps {
-  onAdd: (text: string) => void;
+  proofId: string;
+  onAdd: (proofId: string, text: string) => void;
   inputList: string[];
 }
 
@@ -20,12 +21,12 @@ export class AddInputBox extends React.Component<AddInputBoxProps, AddInputBoxSt
   }
 
   render() {
-    const { onAdd } = this.props;
+    const { onAdd, proofId } = this.props;
     const { text } = this.state;
     return (
       <div>
         <InputGroup placeholder="Enter Given..." value={text} onChange={this.onChange} />
-        <AnchorButton className="pt-minimal" iconName="add" onClick={() => onAdd(text)} />
+        <AnchorButton className="pt-minimal" iconName="add" onClick={() => onAdd(proofId, text)} />
       </div>
     );
   }

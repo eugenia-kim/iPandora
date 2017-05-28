@@ -3,3 +3,4 @@
  */
 
 export const ADD_GIVEN = 'ADD_GIVEN';
+export const ERR_GIVEN = 'ERR_GIVEN';
