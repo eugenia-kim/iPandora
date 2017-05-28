@@ -4,7 +4,7 @@ import {assign} from "lodash";
 
 export interface AddInputBoxProps {
   onAdd: (text: string) => void;
-  givenList: string[];
+  inputList: string[];
 }
 
 export interface AddInputBoxState {

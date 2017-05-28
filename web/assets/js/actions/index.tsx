@@ -1,6 +1,8 @@
-export const addInput = (text: string) => {
+import { ADD_GIVEN } from "../constants/type"
+
+export const addGiven = (text: string) => {
   return {
-    type: 'ADD_INPUT',
+    type: ADD_GIVEN,
     payload: {
       text,
     }

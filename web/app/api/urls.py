@@ -1,8 +1,11 @@
-from django.conf.urls import url
+from rest_framework import routers
+from django.conf.urls import include, url
+from app.api.views import begin_proof, InputViewSet
 
-from app.views import init_dec
+router = routers.DefaultRouter()
+router.register(r'input', InputViewSet)
 
 urlpatterns = [
-    url(r'^init_dec/?$', init_dec, name='initial declaration')
-    ]
-
+    url(r'^begin_proof/$', begin_proof),
+    url(r'^', include(router.urls)),
+]

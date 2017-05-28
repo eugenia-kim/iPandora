@@ -1,19 +1,19 @@
 import { connect } from 'react-redux';
-import { addInput } from '../actions';
+import { addGiven } from '../actions';
 import {AddInputBox} from "../components/addInputBox";
-import {GivenAction, GivenState} from "../reducers/given";
+import {InputAction, InputState} from "../reducers/index";
 import {Dispatch} from "redux";
 
-const mapStateToProps = (state: GivenState) => {
+const mapStateToProps = (state: InputState) => {
   return {
-    givenList : state.givenList,
+    inputList : state.inputList,
   };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch<GivenAction>) => {
+const mapDispatchToProps = (dispatch: Dispatch<InputAction>) => {
   return {
     onAdd: (text: string) => {
-      dispatch(addInput(text));
+      dispatch(addGiven(text));
     }
   };
 };
