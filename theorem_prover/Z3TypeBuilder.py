@@ -64,6 +64,17 @@ class Z3TypeBuilder(folTypeVisitor):
                 self.__type_map[ctx.TYPE().getText()[1:]] = type
             return type
 
+    def visitInputArray(self, array):
+        print(array)
+        for i in array:
+            input = InputStream(i)
+            lexer = folTypeLexer(input)
+            stream = CommonTokenStream(lexer)
+            parser = folTypeParser(stream)
+
+            tree = parser.init()
+            self.visit(tree)
+
     def visitInputFile(self, file):
         lexer = folTypeLexer(file)
         stream = CommonTokenStream(lexer)

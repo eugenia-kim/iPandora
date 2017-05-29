@@ -4,6 +4,7 @@ import {assign} from "lodash";
 
 export interface AddInputBoxProps {
   proofId: string;
+  inputType: string;
   onAdd: (proofId: string, text: string) => void;
   inputList: string[];
 }
@@ -21,13 +22,13 @@ export class AddInputBox extends React.Component<AddInputBoxProps, AddInputBoxSt
   }
 
   render() {
-    const { inputList, onAdd, proofId } = this.props;
+    const { inputType, inputList, onAdd, proofId } = this.props;
     const { text } = this.state;
     let currKey = 0;
-    console.error(inputList);
+    console.error(inputType);
     return (
       <div>
-        <InputGroup placeholder="Enter Given..." value={text} onChange={this.onChange} />
+        <InputGroup placeholder={ "Enter " + inputType + "..." } value={text} onChange={this.onChange} />
         <AnchorButton className="pt-minimal" iconName="add" onClick={() => onAdd(proofId, text)} />
         {
           inputList.map( (item: string) => {

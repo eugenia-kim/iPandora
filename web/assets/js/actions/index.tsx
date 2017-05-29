@@ -1,5 +1,12 @@
 import * as type from "../constants/type"
 
+export const addType = (text: string) => {
+  return {
+    type: type.ADD_TYPE,
+    payload: text
+  };
+};
+
 export const addGiven = (text: string) => {
   return {
     type: type.ADD_GIVEN,
@@ -13,3 +20,10 @@ export const errorGiven = (error: string) => {
     payload: error,
   };
 };
+
+export const errorType = (error: string) => {
+  return {
+    type: type.ERR_GIVEN,
+    payload: error,
+  }
+}

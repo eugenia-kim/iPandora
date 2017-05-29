@@ -1,5 +1,11 @@
-import {ADD_GIVEN, ERR_GIVEN} from "../constants/type"
+import {ADD_GIVEN, ADD_TYPE, ERR_GIVEN, ERR_TYPE} from "../constants/type"
 import { assign } from "lodash"
+import {combineReducers} from "redux";
+
+export interface AppState {
+  given: InputState;
+  type: InputState;
+}
 
 export interface InputState {
   inputList: string[];
@@ -30,7 +36,31 @@ export function givenReducer(state: InputState = { error: "", inputList: [] }, a
   }
 }
 
+export function typeReducer(state: InputState = { error: "", inputList: []}, action: Action<string>) {
+  switch (action.type) {
+    case ADD_TYPE:
+      const typeList = state.inputList;
+      return assign({}, state, {
+        inputList: [...typeList, action.payload]
+      });
+
+    case ERR_TYPE:
+      return assign({}, state, {
+        error: action.payload
+      });
+
+    default:
+      return state;
+  }
+}
+
 export function toShowReducer(state: InputState, action: Action<string>) {
 
 }
+
+export default combineReducers({
+  given: givenReducer,
+  type: typeReducer,
+});
+
 

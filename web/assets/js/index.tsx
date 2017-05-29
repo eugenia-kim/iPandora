@@ -4,11 +4,11 @@ import App from "./app";
 import { Provider } from 'react-redux';
 import {applyMiddleware, createStore, } from 'redux';
 import { logger } from 'redux-logger';
-import { givenReducer } from "./reducers/index";
+import reducer from "./reducers/index";
 import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
 import {Proof} from "./components/Proof";
 
-let store = createStore(givenReducer, applyMiddleware(logger));
+let store = createStore(reducer, applyMiddleware(logger));
 
 ReactDOM.render(
   <Provider store={store}>
