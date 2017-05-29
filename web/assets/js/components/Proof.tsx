@@ -11,7 +11,7 @@ export class Proof extends React.Component<RouteComponentProps<ProofUrlParams>, 
     return (
       <div>
         SMART COOKIE: {this.props.match.params.proofId}
-        <GivenInputBox />
+        <GivenInputBox proofId={this.props.match.params.proofId} />
       </div>
     )
   }

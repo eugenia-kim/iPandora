@@ -29,3 +29,8 @@ export function givenReducer(state: InputState = { error: "", inputList: [] }, a
       return state;
   }
 }
+
+export function toShowReducer(state: InputState, action: Action<string>) {
+
+}
+

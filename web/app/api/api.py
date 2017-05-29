@@ -1,12 +1,11 @@
 from rest_framework import serializers, viewsets
 
-from .models import Input, Proof
+from .models import Proof, Given
 
-
-class InputSerializer(serializers.HyperlinkedModelSerializer):
+class GivenSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Input
-        fields = ('id', 'text')
+        model = Given
+        fields = ('id', 'proofId', 'text')
 
 class ProofSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

@@ -5,9 +5,10 @@ import {Action, InputState} from "../reducers/index";
 import {Dispatch} from "redux";
 import { post } from "request";
 
-const mapStateToProps = (state: InputState) => {
+const mapStateToProps = (state: InputState, ownProps) => {
   return {
     inputList : state.inputList,
+    ...ownProps
   };
 };
 
@@ -15,7 +16,7 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<string>>) => {
   return {
     onAdd: (proofId: string, text: string) => {
       post(
-        "http://localhost:8000/api/" + proofId + "/add_given",
+        {url: 'http://localhost:8000/api/given/', form: {proofId: proofId, text: text}},
         (error, response, body) => {
           if (error) {
             dispatch(errorGiven(error));
