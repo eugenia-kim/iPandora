@@ -1,13 +1,13 @@
-import {Dispatch} from "redux";
 import {Action, AppState} from "../reducers/index";
-import {addType, errType} from "../actions/index";
-import {connect} from "react-redux";
+import {Dispatch} from "redux";
 import {AddInputBox} from "../components/AddInputBox";
-import { post } from "request";
+import {connect} from "react-redux";
+import {post} from "request";
+import {addToShow, errToShow} from "../actions/index";
 
 const mapStateToProps = (state: AppState, ownProps) => {
   return {
-    inputList: state.type.inputList,
+    inputList : state.toShow.inputList,
     ...ownProps
   };
 };
@@ -16,13 +16,13 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<string>>) => {
   return {
     onAdd: (proofId: string, text: string) => {
       post(
-        {url: 'http://localhost:8000/api/type/',  form: {proofId: proofId, text: text}},
+        {url: 'http://localhost:8000/api/toShow/', form: {proofId: proofId, text: text}},
         (error, response, body) => {
           if (error) {
-            // TODO: if not validated with Z3 type grammar
-            dispatch(errType(error));
+            // TODO: if not validated with Z3 grammar
+            dispatch(errToShow(error));
           } else {
-            dispatch(addType(text));
+            dispatch(addToShow(text));
           }
         }
       )
@@ -30,9 +30,9 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<string>>) => {
   };
 };
 
-const TypeInputBox = connect (
+const ToShowInputBox = connect (
   mapStateToProps,
   mapDispatchToProps,
 )(AddInputBox);
 
-export default TypeInputBox;
+export default ToShowInputBox;

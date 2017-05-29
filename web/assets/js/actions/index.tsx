@@ -14,16 +14,30 @@ export const addGiven = (text: string) => {
   };
 };
 
-export const errorGiven = (error: string) => {
+export const addToShow = (text: string) => {
+  return {
+    type: type.ADD_TOSHOW,
+    payload: text
+  }
+}
+
+export const errGiven = (error: string) => {
   return {
     type: type.ERR_GIVEN,
     payload: error,
   };
 };
 
-export const errorType = (error: string) => {
+export const errType = (error: string) => {
   return {
     type: type.ERR_GIVEN,
     payload: error,
+  }
+}
+
+export const errToShow = (text: string) => {
+  return {
+    type: type.ERR_TOSHOW,
+    payload: text
   }
 }

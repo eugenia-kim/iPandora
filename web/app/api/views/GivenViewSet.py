@@ -24,3 +24,8 @@ class GivenViewSet(viewsets.ModelViewSet):
             instance = serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+
+    def list(self, request):
+        query = Given.objects.filter(proofId=request.query_params['proofId'])
+        serializer = GivenSerializer(query, many=True)
+        return Response(serializer.data)

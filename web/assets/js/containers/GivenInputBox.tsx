@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import {addGiven, errorGiven} from '../actions';
+import {addGiven, errGiven} from '../actions';
 import {AddInputBox} from "../components/AddInputBox";
 import {Action, AppState} from "../reducers/index";
 import {Dispatch} from "redux";
@@ -20,7 +20,7 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<string>>) => {
         (error, response, body) => {
           if (error) {
             // TODO: if not validated with Z3 grammar
-            dispatch(errorGiven(error));
+            dispatch(errGiven(error));
           } else {
             dispatch(addGiven(text));
           }
