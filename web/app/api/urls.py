@@ -1,6 +1,9 @@
 from rest_framework import routers
 from django.conf.urls import include, url
-from app.api.views import begin_proof, GivenViewSet, TypeViewSet
+
+from app.api.views.GivenViewSet import GivenViewSet
+from app.api.views.TypeViewSet import TypeViewSet
+from app.api.views.begin_proof import begin_proof
 
 router = routers.DefaultRouter()
 router.register(r'given', GivenViewSet)
