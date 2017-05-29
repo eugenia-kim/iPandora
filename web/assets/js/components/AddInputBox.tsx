@@ -21,12 +21,24 @@ export class AddInputBox extends React.Component<AddInputBoxProps, AddInputBoxSt
   }
 
   render() {
-    const { onAdd, proofId } = this.props;
+    const { inputList, onAdd, proofId } = this.props;
     const { text } = this.state;
+    let currKey = 0;
+    console.error(inputList);
     return (
       <div>
         <InputGroup placeholder="Enter Given..." value={text} onChange={this.onChange} />
         <AnchorButton className="pt-minimal" iconName="add" onClick={() => onAdd(proofId, text)} />
+        {
+          inputList.map( (item: string) => {
+            console.error(item);
+            return (
+              <div key={currKey++} className="pt-card">
+                {item}
+              </div>
+            );
+          })
+        }
       </div>
     );
   }
