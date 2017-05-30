@@ -1,14 +1,19 @@
 import logging
 
+from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets, status
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.decorators import authentication_classes
 from rest_framework.authentication import BasicAuthentication
 
+from app.api.models.Exception import ExceptionSerializer
 from app.api.models.Types import Type, TypeSerializer
 
 from app.api.csrf import CsrfExemptSessionAuthentication
+from app.api.utils import Z3Exception
+
 logger = logging.getLogger(__name__)
 
 @authentication_classes((CsrfExemptSessionAuthentication, BasicAuthentication))
@@ -21,12 +26,19 @@ class TypeViewSet(viewsets.ModelViewSet):
         serializer = TypeSerializer(data=request.data)
         prev_query = Type.objects.filter(proofId=request.data['proofId'])
         types = [t['text'] for t in TypeSerializer(prev_query, many=True).data]
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             serializer.save()
             types.append(serializer.data['text'])
-            type_valid = Type.is_valid(types)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+            # TODO
+            if Type.is_valid(types):
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                #TODO
+                raise Z3Exception('Syntax Error', 'text', status.HTTP_400_BAD_REQUEST)
+                #exception_serializer = ExceptionSerializer(data={'error_type' : 'Syntax_Error'})
+                #if exception_serializer.is_valid():
+                #return JsonResponse(data={'text' : 'Syntax Error'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def list(self, request):
         query = Type.objects.filter(proofId=request.query_params['proofId'])

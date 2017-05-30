@@ -17,8 +17,8 @@ class Type(models.Model):
     @classmethod
     def is_valid(cls, types):
         type_builder = Z3TypeBuilder(dict(), dict())
-        type_builder.visitInputArray(types)
-        return True
+        valid = type_builder.visitInputArray(types)
+        return valid
 
 
 class TypeSerializer(serializers.ModelSerializer):

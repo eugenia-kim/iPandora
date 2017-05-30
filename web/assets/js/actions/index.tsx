@@ -30,7 +30,7 @@ export const errGiven = (error: string) => {
 
 export const errType = (error: string) => {
   return {
-    type: type.ERR_GIVEN,
+    type: type.ERR_TYPE,
     payload: error,
   }
 }

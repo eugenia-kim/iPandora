@@ -1,5 +1,5 @@
 import * as React from "react";
-import {AnchorButton, InputGroup} from "@blueprintjs/core";
+import {Alert, AnchorButton, InputGroup} from "@blueprintjs/core";
 import {assign} from "lodash";
 
 export interface AddInputBoxProps {
@@ -7,10 +7,12 @@ export interface AddInputBoxProps {
   inputType: string;
   onAdd: (proofId: string, text: string) => void;
   inputList: string[];
+  error: string;
 }
 
 export interface AddInputBoxState {
   text: string;
+  isOpenError: boolean;
 }
 
 export class AddInputBox extends React.Component<AddInputBoxProps, AddInputBoxState> {
@@ -18,21 +20,28 @@ export class AddInputBox extends React.Component<AddInputBoxProps, AddInputBoxSt
     super();
     this.state = {
       text: "",
+      isOpenError: false,
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.error(this.props.error);
+    if(this.props.error !== nextProps.error) {
+      // Check if it's a new error
+           this.handleOpenError();
+    }
   }
 
   render() {
     const { inputType, inputList, onAdd, proofId } = this.props;
     const { text } = this.state;
     let currKey = 0;
-    console.error(inputType);
     return (
       <div>
         <InputGroup placeholder={ "Enter " + inputType + "..." } value={text} onChange={this.onChange} />
         <AnchorButton className="pt-minimal" iconName="add" onClick={() => onAdd(proofId, text)} />
         {
           inputList.map( (item: string) => {
-            console.error(item);
             return (
               <div key={currKey++} className="pt-card">
                 {item}
@@ -40,12 +49,18 @@ export class AddInputBox extends React.Component<AddInputBoxProps, AddInputBoxSt
             );
           })
         }
+        <Alert isOpen={this.state.isOpenError} onConfirm={this.handleCloseError}>
+          <p> {this.props.error} </p>
+        </Alert>
       </div>
     );
   }
 
   private onChange = (event: React.FormEvent<HTMLElement>) => {
     const text = (event.target as HTMLInputElement).value;
-    this.setState({ text });
-  }
+    this.setState({text});
+  };
+
+  private handleOpenError = () => this.setState({ isOpenError: true });
+  private handleCloseError = () => this.setState({ isOpenError: false });
 }
