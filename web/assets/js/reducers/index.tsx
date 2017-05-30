@@ -46,7 +46,8 @@ export function typeReducer(state: InputState = initInputState, action: Action<s
     case ADD_TYPE:
       const typeList = state.inputList;
       return assign({}, state, {
-        inputList: [...typeList, action.payload]
+        inputList: [...typeList, action.payload],
+        error: ""
       });
 
     case ERR_TYPE:

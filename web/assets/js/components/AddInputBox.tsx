@@ -26,7 +26,7 @@ export class AddInputBox extends React.Component<AddInputBoxProps, AddInputBoxSt
 
   componentWillReceiveProps(nextProps) {
     console.error(this.props.error);
-    if(this.props.error !== nextProps.error) {
+    if(nextProps.error !== "") {
       // Check if it's a new error
            this.handleOpenError();
     }
@@ -49,7 +49,7 @@ export class AddInputBox extends React.Component<AddInputBoxProps, AddInputBoxSt
             );
           })
         }
-        <Alert isOpen={this.state.isOpenError} onConfirm={this.handleCloseError}>
+        <Alert isOpen={ this.state.isOpenError} onConfirm={this.handleCloseError}>
           <p> {this.props.error} </p>
         </Alert>
       </div>

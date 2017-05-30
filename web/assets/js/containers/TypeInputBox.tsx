@@ -20,8 +20,6 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<string>>) => {
       post({json: true, url: 'http://localhost:8000/api/type/',  form: {proofId: proofId, text: text}},
         (error, response, body) => {
           if (response.statusCode === 400) {
-            // TODO: if not validated with Z3 type grammar
-            console.error(response)
             dispatch(errType(response.body['text']));
           } else {
             dispatch(addType(text));
