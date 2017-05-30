@@ -81,7 +81,7 @@ class Z3TypeBuilder(folTypeVisitor):
                 return False
 
             self.visit(tree)
-            return True
+        return True
 
     def visitInputFile(self, file):
         lexer = folTypeLexer(file)

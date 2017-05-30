@@ -8,7 +8,6 @@ from rest_framework.response import Response
 from rest_framework.decorators import authentication_classes
 from rest_framework.authentication import BasicAuthentication
 
-from app.api.models.Exception import ExceptionSerializer
 from app.api.models.Types import Type, TypeSerializer
 
 from app.api.csrf import CsrfExemptSessionAuthentication
@@ -29,15 +28,12 @@ class TypeViewSet(viewsets.ModelViewSet):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             types.append(serializer.data['text'])
-            # TODO
+            logger.error(types)
             if Type.is_valid(types):
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else:
                 #TODO
                 raise Z3Exception('Syntax Error', 'text', status.HTTP_400_BAD_REQUEST)
-                #exception_serializer = ExceptionSerializer(data={'error_type' : 'Syntax_Error'})
-                #if exception_serializer.is_valid():
-                #return JsonResponse(data={'text' : 'Syntax Error'}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def list(self, request):
