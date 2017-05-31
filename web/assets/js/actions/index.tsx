@@ -74,9 +74,9 @@ export const errType = (error: string) => {
   }
 }
 
-export const errToShow = (text: string) => {
+export const errToShow = (error: string) => {
   return {
     type: type.ERR_TOSHOW,
-    payload: text
+    payload: error,
   }
 }

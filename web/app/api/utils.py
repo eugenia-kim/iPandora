@@ -19,7 +19,7 @@ class Z3Exception(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_detail = 'Z3 Error'
 
-    def __init__(self, detail, field, status_code):
+    def __init__(self, detail: object, field: object, status_code: object) -> object:
         if status_code is not None: self.status_code = status_code
         if detail is not None:
             self.detail = {field: force_text(detail)}
