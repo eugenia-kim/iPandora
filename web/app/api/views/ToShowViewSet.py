@@ -1,6 +1,5 @@
 import logging
 
-import z3types
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets, status
 from rest_framework.response import Response
@@ -31,7 +30,7 @@ class ToShowViewSet(viewsets.ModelViewSet):
                 raise Z3Exception('Type Declarations Error', 'text', status.HTTP_400_BAD_REQUEST)
             try:
                 step_valid = ToShow.is_valid(serializer.validated_data['text'], param_map, predicate_map)
-            except z3types.Z3Exception as err:
+            except Exception as err:
                 raise Z3Exception(err, 'text', status.HTTP_400_BAD_REQUEST)
             if not step_valid:
                 raise Z3Exception('Syntax Error', 'text', status.HTTP_400_BAD_REQUEST)

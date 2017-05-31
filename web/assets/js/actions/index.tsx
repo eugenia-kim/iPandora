@@ -80,3 +80,10 @@ export const errToShow = (error: string) => {
     payload: error,
   }
 }
+
+export const deleteType = (data: TypeData) => {
+  return {
+    type: type.DELETE_TYPE,
+    payload: data,
+  }
+}

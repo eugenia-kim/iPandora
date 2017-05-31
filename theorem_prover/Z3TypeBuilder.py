@@ -59,10 +59,19 @@ class Z3TypeBuilder(folTypeVisitor):
         elif ctx.BOOL():
             return BoolSort()
         else:
+            print("ENTERED ELSE")
             type = self.__type_map.get(ctx.TYPE().getText()[1:])
+            print(type)
             if type is None:
-                type = DeclareSort(ctx.TYPE().getText()[1:])
+                print("TYPE WAS NONE")
+                blabla = ctx.TYPE().getText()[1:]
+                print("We got blbafs")
+                print(blabla)
+                type = DeclareSort(blabla)
+                print("DECLARED SORT")
+                print(type)
                 self.__type_map[ctx.TYPE().getText()[1:]] = type
+            print("RETURNING")
             return type
 
     def visitInputArray(self, array):
@@ -92,7 +101,7 @@ class Z3TypeBuilder(folTypeVisitor):
         self.visit(tree)
 
 def main(argv):
-    type_builder = Z3TypeBuilder()
+    type_builder = Z3TypeBuilder(dict(), dict())
     type_builder.visitInputFile(FileStream(argv[1]))
 
 if __name__ == '__main__':

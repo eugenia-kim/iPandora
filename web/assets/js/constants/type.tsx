@@ -14,3 +14,5 @@ export const ADD_TOSHOW = 'ADD_TOSHOW';
 export const ERR_GIVEN = 'ERR_GIVEN';
 export const ERR_TYPE = 'ERR_TYPE';
 export const ERR_TOSHOW = 'ERR_TOSHOW';
+
+export const DELETE_TYPE = 'DELETE_TYPE';

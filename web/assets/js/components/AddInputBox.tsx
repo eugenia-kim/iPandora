@@ -10,6 +10,7 @@ export interface AddInputBoxProps {
   proofId: string;
   inputType: string;
   onAdd: (proofId: string, text: string) => void;
+  onDelete: (proofId: string, id: number, text: string) => void;
   dataList: Input[];
   error: string;
   getData: (proofId: string) => void;
@@ -32,7 +33,7 @@ export class AddInputBox extends React.Component<AddInputBoxProps, AddInputBoxSt
   }
 
   render() {
-    const { inputType, dataList, onAdd, proofId, error } = this.props;
+    const { inputType, dataList, onDelete, onAdd, proofId, error } = this.props;
     const { text } = this.state;
     let currKey = 0;
     return (
@@ -55,6 +56,7 @@ export class AddInputBox extends React.Component<AddInputBoxProps, AddInputBoxSt
             return (
               <div key={currKey++} className="pt-card">
                 {item.text}
+                <AnchorButton className="pt-minimal" iconName="delete" onClick={() => onDelete(proofId, item.id, item.text)} />
               </div>
             );
           })

@@ -71,6 +71,11 @@ export function typeReducer(state: InputState<TypeData> = initInputState,
         error: action.payload
       });
 
+    case actionType.DELETE_TYPE:
+      return assign({}, state, {
+        data: state.data.filter(item => item.id !== (action as Action<TypeData>).payload.id),
+      });
+
     default:
       return state;
   }
