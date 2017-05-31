@@ -10,6 +10,7 @@ const mapStateToProps = (state: AppState, ownProps) => {
     dataList: state.given.data.map(d => {
       return {id: d.id, text: d.text};
     }),
+    error: state.given.error,
     ...ownProps
   };
 };
@@ -26,11 +27,11 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<string>>) => {
     },
     onAdd: (proofId: string, text: string) => {
       post(
-        {url: 'http://localhost:8000/api/given/', form: {proofId: proofId, text: text}},
+        {json: true, url: 'http://localhost:8000/api/given/', form: {proofId: proofId, text: text}},
         (error, response, body) => {
-          if (error) {
+          if (response.statusCode === 400) {
             // TODO: if not validated with Z3 grammar
-            dispatch(errGiven(error));
+            dispatch(errGiven(body['text']));
           } else {
             dispatch(addGiven(body));
           }

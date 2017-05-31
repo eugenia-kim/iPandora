@@ -23,9 +23,9 @@ class TypeViewSet(viewsets.ModelViewSet):
     @csrf_exempt
     def create(self, request):
         serializer = TypeSerializer(data=request.data)
-        prev_query = Type.objects.filter(proofId=request.data['proofId'])
-        types = [t['text'] for t in TypeSerializer(prev_query, many=True).data]
         if serializer.is_valid(raise_exception=True):
+            prev_query = Type.objects.filter(proofId=request.data['proofId'])
+            types = [t['text'] for t in TypeSerializer(prev_query, many=True).data]
             types.append(serializer.validated_data['text'])
             if Type.is_valid(types):
                 serializer.save()

@@ -30,9 +30,9 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<string>>) => {
       post({json: true, url: 'http://localhost:8000/api/type/',  form: {proofId: proofId, text: text}},
         (error, response, body) => {
           if (response.statusCode === 400) {
-            dispatch(errType(response.body['text']));
+            dispatch(errType(body['text']));
           } else {
-            dispatch(addType(response.body));
+            dispatch(addType(body));
           }
         }
       )

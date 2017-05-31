@@ -20,6 +20,14 @@ class Type(models.Model):
         valid = type_builder.visitInputArray(types)
         return valid
 
+    @classmethod
+    def get_maps(cls, types):
+        param_map = dict()
+        predicate_map = dict()
+        type_builder = Z3TypeBuilder(param_map, predicate_map)
+        valid = type_builder.visitInputArray(types)
+        return valid, param_map, predicate_map
+
 
 class TypeSerializer(serializers.ModelSerializer):
     class Meta:

@@ -1,4 +1,3 @@
-import sys
 import argparse
 from antlr4 import *
 from folLexer import folLexer
@@ -7,6 +6,9 @@ from folVisitor import folVisitor
 from functools import *
 from z3 import *
 from Z3TypeBuilder import Z3TypeBuilder
+
+from error.folSyntaxErrorListener import folSyntaxErrorListener
+
 
 class Z3StepBuilder(folVisitor):
 
@@ -216,6 +218,23 @@ class Z3StepBuilder(folVisitor):
             # TODO: throw an error no variable declared {Green(?x)}
             print("ERROR DETECTED: " + name)
             pass
+
+    def visitInput(self, step):
+        input = InputStream(step)
+        lexer = folLexer(input)
+        stream = CommonTokenStream(lexer)
+        parser = folParser(stream)
+        errorListener = folSyntaxErrorListener()
+        parser.removeErrorListeners()
+        parser.addErrorListener(errorListener)
+
+        # Generate Parse tree and check for syntax errors
+        tree = parser.step()
+        if not errorListener.isGood():
+            return False
+
+        self.visit(tree)
+        return True
 
     def visitInputFile(self, file):
         lexer = folLexer(file)
