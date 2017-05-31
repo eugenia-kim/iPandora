@@ -27,7 +27,6 @@ class TypeViewSet(viewsets.ModelViewSet):
         types = [t['text'] for t in TypeSerializer(prev_query, many=True).data]
         if serializer.is_valid(raise_exception=True):
             types.append(serializer.validated_data['text'])
-            logger.error(types)
             if Type.is_valid(types):
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)

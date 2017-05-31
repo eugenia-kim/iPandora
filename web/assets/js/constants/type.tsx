@@ -2,6 +2,11 @@
  * Created by eugeniakim on 28/05/2017.
  */
 
+export const SET_TYPES = 'SET_TYPES';
+export const SET_GIVENS = 'SET_GIVENS';
+export const SET_TOSHOWS = 'SET_TOSHOWS';
+
+
 export const ADD_GIVEN = 'ADD_GIVEN';
 export const ADD_TYPE = 'ADD_TYPE';
 export const ADD_TOSHOW = 'ADD_TOSHOW';

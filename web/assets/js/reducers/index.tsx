@@ -1,15 +1,16 @@
-import {ADD_GIVEN, ADD_TOSHOW, ADD_TYPE, ERR_GIVEN, ERR_TOSHOW, ERR_TYPE} from "../constants/type"
+import * as actionType from "../constants/type"
 import { assign } from "lodash"
 import {combineReducers} from "redux";
+import {GivenData, ToShowData, TypeData} from "../actions/index";
 
 export interface AppState {
-  given: InputState;
-  type: InputState;
-  toShow: InputState;
+  given: InputState<GivenData>;
+  type: InputState<TypeData>;
+  toShow: InputState<ToShowData>;
 }
 
-export interface InputState {
-  inputList: string[];
+export interface InputState<T> {
+  data: T[];
   error: string;
 }
 
@@ -19,19 +20,26 @@ export interface Action<T> {
 }
 
 const initInputState  = {
-  inputList: [],
-  error: ""
+  data: [],
+  error: "",
 };
 
-export function givenReducer(state: InputState = initInputState, action: Action<string>) {
+export function givenReducer(state: InputState<GivenData> = initInputState,
+                             action: Action<GivenData> | Action<GivenData[]> | Action<string>) {
   switch (action.type) {
-    case ADD_GIVEN:
-      const givenList = state.inputList;
+    case actionType.SET_GIVENS:
       return assign({}, state, {
-        inputList: [...givenList, action.payload]
+        data: (action as Action<GivenData[]>).payload,
+        error: "",
       });
 
-    case ERR_GIVEN:
+    case actionType.ADD_GIVEN:
+      const givenList = state.data;
+      return assign({}, state, {
+        data: [...givenList, action.payload]
+      });
+
+    case actionType.ERR_GIVEN:
       return assign({}, state, {
         error: action.payload
       });
@@ -41,16 +49,24 @@ export function givenReducer(state: InputState = initInputState, action: Action<
   }
 }
 
-export function typeReducer(state: InputState = initInputState, action: Action<string>) {
+export function typeReducer(state: InputState<TypeData> = initInputState,
+                            action: Action<TypeData> | Action<TypeData[]> | Action<string>) {
   switch (action.type) {
-    case ADD_TYPE:
-      const typeList = state.inputList;
+
+    case actionType.SET_TYPES:
       return assign({}, state, {
-        inputList: [...typeList, action.payload],
+        data: (action as Action<TypeData[]>).payload,
+        error: "",
+      });
+
+    case actionType.ADD_TYPE:
+      const typeList = state.data;
+      return assign({}, state, {
+        data: [...typeList, action.payload],
         error: ""
       });
 
-    case ERR_TYPE:
+    case actionType.ERR_TYPE:
       return assign({}, state, {
         error: action.payload
       });
@@ -60,15 +76,22 @@ export function typeReducer(state: InputState = initInputState, action: Action<s
   }
 }
 
-export function toShowReducer(state: InputState = initInputState, action: Action<string>) {
+export function toShowReducer(state: InputState<ToShowData> = initInputState,
+                              action: Action<ToShowData> | Action<ToShowData[]> | Action<string>) {
   switch (action.type) {
-    case ADD_TOSHOW:
-      const toShowList = state.inputList;
+    case actionType.SET_TOSHOWS:
       return assign({}, state, {
-        inputList: [...toShowList, action.payload]
+        data: (action as Action<ToShowData[]>).payload,
+        error: "",
       });
 
-    case ERR_TOSHOW:
+    case actionType.ADD_TOSHOW:
+      const toShowList = state.data;
+      return assign({}, state, {
+        data: [...toShowList, action.payload]
+      });
+
+    case actionType.ERR_TOSHOW:
       return assign({}, state, {
         error: action.payload
       });

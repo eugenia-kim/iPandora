@@ -1,18 +1,22 @@
 import * as React from "react";
-import {Alert, AnchorButton, InputGroup} from "@blueprintjs/core";
+import {Alert, AnchorButton, InputGroup, Tooltip} from "@blueprintjs/core";
 import {assign} from "lodash";
 
+export interface Input {
+  id: number,
+  text: string,
+}
 export interface AddInputBoxProps {
   proofId: string;
   inputType: string;
   onAdd: (proofId: string, text: string) => void;
-  inputList: string[];
+  dataList: Input[];
   error: string;
+  getData: (proofId: string) => void;
 }
 
 export interface AddInputBoxState {
   text: string;
-  isOpenError: boolean;
 }
 
 export class AddInputBox extends React.Component<AddInputBoxProps, AddInputBoxState> {
@@ -20,38 +24,41 @@ export class AddInputBox extends React.Component<AddInputBoxProps, AddInputBoxSt
     super();
     this.state = {
       text: "",
-      isOpenError: false,
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    console.error(this.props.error);
-    if(nextProps.error !== "") {
-      // Check if it's a new error
-           this.handleOpenError();
-    }
+  componentDidMount() {
+    this.props.getData(this.props.proofId);
   }
 
   render() {
-    const { inputType, inputList, onAdd, proofId } = this.props;
+    const { inputType, dataList, onAdd, proofId, error } = this.props;
     const { text } = this.state;
     let currKey = 0;
     return (
       <div>
-        <InputGroup placeholder={ "Enter " + inputType + "..." } value={text} onChange={this.onChange} />
+        <InputGroup
+          placeholder={ "Enter " + inputType + "..." }
+          value={text}
+          onChange={this.onChange}
+          rightElement={
+            error && (
+              <Tooltip content={error}>
+                <span className="pt-icon-error pt-intent-danger" />
+              </Tooltip>
+            )
+          }
+        />
         <AnchorButton className="pt-minimal" iconName="add" onClick={() => onAdd(proofId, text)} />
         {
-          inputList.map( (item: string) => {
+          dataList.map( (item: Input) => {
             return (
               <div key={currKey++} className="pt-card">
-                {item}
+                {item.text}
               </div>
             );
           })
         }
-        <Alert isOpen={ this.state.isOpenError} onConfirm={this.handleCloseError}>
-          <p> {this.props.error} </p>
-        </Alert>
       </div>
     );
   }
@@ -61,6 +68,4 @@ export class AddInputBox extends React.Component<AddInputBoxProps, AddInputBoxSt
     this.setState({text});
   };
 
-  private handleOpenError = () => this.setState({ isOpenError: true });
-  private handleCloseError = () => this.setState({ isOpenError: false });
 }
