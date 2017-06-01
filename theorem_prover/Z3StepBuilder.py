@@ -46,7 +46,8 @@ class Z3StepBuilder(folVisitor):
     def visitIntermediate(self, ctx: folParser.IntermediateContext):
         print("Intermediate")
         condition = self.visit(ctx.condition())
-        return ctx.LINE().getText()[1:], condition
+        #return ctx.LINE().getText()[1:],condition
+        return condition
 
     def visitJustification(self, ctx: folParser.JustificationContext):
         if ctx.line():
@@ -233,8 +234,21 @@ class Z3StepBuilder(folVisitor):
         if not errorListener.isGood():
             return False
 
-        self.visit(tree)
+        z3 = self.visit(tree)
         return True
+
+    def visitInputArray(self, array):
+        z3 = []
+        for i in array:
+            input = InputStream(i)
+            lexer = folLexer(input)
+            stream = CommonTokenStream(lexer)
+            parser = folParser(stream)
+            tree = parser.step()
+
+            z3.append(self.visit(tree))
+        return z3
+
 
     def visitInputFile(self, file):
         lexer = folLexer(file)

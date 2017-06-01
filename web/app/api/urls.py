@@ -1,6 +1,7 @@
 from rest_framework import routers
 from django.conf.urls import include, url
 
+from app.api.views.StepViewSet import StepViewSet
 from app.api.views.ToShowViewSet import ToShowViewSet
 from app.api.views.GivenViewSet import GivenViewSet
 from app.api.views.TypeViewSet import TypeViewSet
@@ -10,6 +11,7 @@ router = routers.DefaultRouter()
 router.register(r'given', GivenViewSet)
 router.register(r'type', TypeViewSet)
 router.register(r'toShow', ToShowViewSet)
+router.register(r'step', StepViewSet)
 
 urlpatterns = [
     url(r'^begin_proof/$', begin_proof),

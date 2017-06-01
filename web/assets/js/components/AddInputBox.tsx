@@ -55,7 +55,7 @@ export class AddInputBox extends React.Component<AddInputBoxProps, AddInputBoxSt
           dataList.map( (item: Input) => {
             return (
               <div key={currKey++} className="pt-card">
-                {item.text}
+                [{currKey}] {item.text}
                 <AnchorButton className="pt-minimal" iconName="delete" onClick={() => onDelete(proofId, item.id, item.text)} />
               </div>
             );

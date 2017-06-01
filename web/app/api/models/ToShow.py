@@ -12,7 +12,7 @@ class ToShow(models.Model):
     text = models.CharField(max_length=300)
 
     @classmethod
-    def is_valid(cls, toshow, param_map, predicate_map):
+    def z3_valid(cls, toshow, param_map, predicate_map):
         step_builder = Z3StepBuilder(param_map, predicate_map)
         valid = step_builder.visitInput(toshow)
         return valid

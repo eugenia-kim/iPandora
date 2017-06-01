@@ -1,3 +1,4 @@
+import logging
 from z3 import *
 import argparse
 import sys
@@ -5,56 +6,36 @@ from Z3StepBuilder import Z3StepBuilder
 from Z3TypeBuilder import Z3TypeBuilder
 from antlr4 import *
 
+
+
 class Z3ProofBuilder():
 
-    def __init__(self, type_builder, step_builder):
-
-        # given condition in z3 formulas
-        self.givens= []
-
-        # toShow condition in z3 formula
-        self.toShow = None
-
-        self.type_builder = type_builder
+    def __init__(self, step_builder, step, given_just, step_just):
 
         self.step_builder = step_builder
 
-    def setTypes(self, declaration):
-        self.type_builder.visitInputFile(FileStream(declaration))
+        self.step = step
+        self.given_just = given_just
+        self.step_just = step_just
 
-    def setGiven(self, given):
-        z3_given = self.step_builder.visitInputFile(FileStream(given))
-        self.givens.append(z3_given)
+    def __build(self):
+        lhs_1 = self.step_builder.visitInputArray(self.given_just)
+        logging.error(lhs_1)
+        lhs_2 = self.step_builder.visitInputArray(self.step_just)
+        rhs = self.step_builder.visitInputArray(self.step)
 
-    def setToShow(self, toShow):
-        self.toShow = self.step_builder.visitInputFile(toShow)
+        z3 = Implies(And(And(*lhs_1), And(*lhs_2)), rhs)
+        print("THE PROOF WE NEED TO CHECK IS:" + z3)
+        return z3
 
-    def build(self):
-        return Z3Proof(self.givens, self.toShow, self.step_builder)
-
-class Z3Proof():
-
-    def __init__(self, given, toShow, step_builder):
-
-        # given condition in z3 formula
-        self.given = given
-
-        # toShow condition in z3 formula
-        self.toShow = toShow
-
-        self.step_builder = step_builder
-
-        # step_map = [line number. z3 formula]
-        self.step_map = dict()
-
-    def __isValid(self, f):
+    def isValid(self):
         s = Solver()
-        s.add(Not(f))
+        s.add(Not(self.__build()))
         return s.check() == unsat
 
-    def __isSat(self, f):
+    def isSat(self):
         s = Solver()
-        s.add(f)
+        s.add(self.__build())
         return s.check() == sat
 
 def get_args():
@@ -74,6 +55,7 @@ def get_args():
 
 
 def main(argv):
+
     args = get_args()
 
     type_builder = Z3TypeBuilder()

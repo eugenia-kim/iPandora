@@ -29,7 +29,7 @@ class ToShowViewSet(viewsets.ModelViewSet):
             if not type_valid:
                 raise Z3Exception('Type Declarations Error', 'text', status.HTTP_400_BAD_REQUEST)
             try:
-                step_valid = ToShow.is_valid(serializer.validated_data['text'], param_map, predicate_map)
+                step_valid = ToShow.z3_valid(serializer.validated_data['text'], param_map, predicate_map)
             except Exception as err:
                 raise Z3Exception(err, 'text', status.HTTP_400_BAD_REQUEST)
             if not step_valid:
