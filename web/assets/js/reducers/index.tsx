@@ -44,6 +44,11 @@ export function givenReducer(state: InputState<GivenData> = initInputState,
         error: action.payload
       });
 
+    case actionType.DELETE_GIVEN:
+      return assign({}, state, {
+        data: state.data.filter(item => item.id !== (action as Action<GivenData>).payload.id),
+      });
+
     default:
       return state;
   }
@@ -99,6 +104,11 @@ export function toShowReducer(state: InputState<ToShowData> = initInputState,
     case actionType.ERR_TOSHOW:
       return assign({}, state, {
         error: action.payload
+      });
+
+    case actionType.DELETE_TOSHOW:
+      return assign({}, state, {
+        data: state.data.filter(item => item.id !== (action as Action<ToShowData>).payload.id),
       });
 
     default:

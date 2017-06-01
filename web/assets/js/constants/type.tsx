@@ -16,3 +16,5 @@ export const ERR_TYPE = 'ERR_TYPE';
 export const ERR_TOSHOW = 'ERR_TOSHOW';
 
 export const DELETE_TYPE = 'DELETE_TYPE';
+export const DELETE_GIVEN = 'DELETE_GIVEN';
+export const DELETE_TOSHOW = 'DELETE_TOSHOW';

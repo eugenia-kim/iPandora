@@ -8,13 +8,13 @@ export interface TypeData {
 
 export interface GivenData {
   id: number;
-  proofID: string;
+  proofId: string;
   text: string;
 }
 
 export interface ToShowData {
   id: number;
-  proofID: string;
+  proofId: string;
   text: string;
 }
 
@@ -71,19 +71,34 @@ export const errType = (error: string) => {
   return {
     type: type.ERR_TYPE,
     payload: error,
-  }
-}
+  };
+};
 
 export const errToShow = (error: string) => {
   return {
     type: type.ERR_TOSHOW,
     payload: error,
-  }
-}
+  };
+};
 
 export const deleteType = (data: TypeData) => {
   return {
     type: type.DELETE_TYPE,
     payload: data,
-  }
-}
+  };
+};
+
+export const deleteGiven = (data: GivenData) => {
+  return {
+    type: type.DELETE_GIVEN,
+    payload: data,
+  };
+};
+
+export const deleteToShow = (data: ToShowData) => {
+  return {
+    type: type.DELETE_TOSHOW,
+    payload: data,
+  };
+};
+

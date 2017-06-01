@@ -1,4 +1,5 @@
 import logging
+
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets, status
 from rest_framework.response import Response
@@ -14,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 @authentication_classes((CsrfExemptSessionAuthentication, BasicAuthentication))
 class GivenViewSet(viewsets.ModelViewSet):
+
         #API endpoint that allows users to be viewed or edited.
     queryset = Given.objects.all()
     serializer_class = GivenSerializer

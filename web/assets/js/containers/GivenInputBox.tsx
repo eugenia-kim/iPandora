@@ -1,9 +1,9 @@
 import { connect } from 'react-redux';
-import {addGiven, errGiven, setGivens } from '../actions';
+import {addGiven, deleteGiven, errGiven, setGivens} from '../actions';
 import {AddInputBox} from "../components/AddInputBox";
 import {Action, AppState} from "../reducers/index";
 import {Dispatch} from "redux";
-import { post, get } from "request";
+import { del, post, get } from "request";
 
 const mapStateToProps = (state: AppState, ownProps) => {
   return {
@@ -35,6 +35,13 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<string>>) => {
           } else {
             dispatch(addGiven(body));
           }
+        }
+      )
+    },
+    onDelete: (proofId: string, id: number, text: string) => {
+      del({json: true, url: 'http://localhost:8000/api/give/' + id + '/'},
+        (error, response, body) => {
+          dispatch(deleteGiven({proofId: proofId, id: id, text: text}));
         }
       )
     }

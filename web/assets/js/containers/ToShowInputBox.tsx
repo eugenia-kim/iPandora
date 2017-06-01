@@ -2,8 +2,8 @@ import {Action, AppState} from "../reducers/index";
 import {Dispatch} from "redux";
 import {AddInputBox} from "../components/AddInputBox";
 import {connect} from "react-redux";
-import { get, post} from "request";
-import {addToShow, errToShow, setToShows} from "../actions/index";
+import { del, get, post} from "request";
+import {addToShow, deleteToShow, errToShow, setToShows} from "../actions/index";
 
 const mapStateToProps = (state: AppState, ownProps) => {
   return {
@@ -36,6 +36,13 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<string>>) => {
           } else {
             dispatch(addToShow(body));
           }
+        }
+      )
+    },
+    onDelete: (proofId: string, id: number, text: string) => {
+      del({json:true, url: 'http://localhost:8000/api/toShow/' + id + '/'},
+        (error, response, body) => {
+          dispatch(deleteToShow({proofId: proofId, id: id, text:text}));
         }
       )
     }
