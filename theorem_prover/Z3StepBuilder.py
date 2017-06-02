@@ -1,4 +1,3 @@
-import sys
 import argparse
 from antlr4 import *
 from folLexer import folLexer
@@ -8,15 +7,12 @@ from functools import *
 from z3 import *
 from Z3TypeBuilder import Z3TypeBuilder
 
+from error.folSyntaxErrorListener import folSyntaxErrorListener
+
+
 class Z3StepBuilder(folVisitor):
 
     def __init__(self, param_map = None, predicate_map = None):
-
-        self.given = None
-        self.toShow = None
-
-        # step_map = [line number. z3 formula]
-        self.step_map = dict()
 
         # proposition_map = [proposition_name, z3 Bool]
         self.proposition_map = dict()
@@ -36,39 +32,6 @@ class Z3StepBuilder(folVisitor):
 
     # Visit a parse tree produced by folParser#step.
     def visitStep(self, ctx: folParser.StepContext):
-        justification = self.visit(ctx.justification())
-        condition = self.visit(ctx.intermediate())
-        if justification == "given":
-            self.given = condition
-        elif justification == "toShow":
-            self.toShow = condition
-        else:
-            print("LINE LIST!!!!")
-        # TODO: elif justification == "ass": and line_list
-        return condition
-
-    def visitIntermediate(self, ctx: folParser.IntermediateContext):
-        print("Intermediate")
-        condition = self.visit(ctx.condition())
-        self.step_map[ctx.LINE().getText()[1:]] = condition
-        return condition
-
-    def visitJustification(self, ctx: folParser.JustificationContext):
-        if ctx.line():
-            line_list = list(map((lambda l: self.visit(l)), ctx.line()))
-            return line_list
-        elif ctx.GIVEN():
-            return ctx.GIVEN().getText()[1:]
-        elif ctx.TOSHOW():
-            return ctx.TOSHOW().getText()[1:]
-        elif ctx.ASS():
-            return ctx.ASS().getText()[1:]
-
-    def visitLine(self, ctx: folParser.LineContext):
-        # TODO: add CASE once debugged in fol.g4
-        return ctx.LINE().getText()[1:]
-
-    def visitCondition(self, ctx: folParser.ConditionContext):
         return self.visit(ctx.formula())
 
     def visitFormula(self, ctx: folParser.FormulaContext):
@@ -224,13 +187,43 @@ class Z3StepBuilder(folVisitor):
             print("ERROR DETECTED: " + name)
             pass
 
+    def visitInput(self, step):
+        input = InputStream(step)
+        lexer = folLexer(input)
+        stream = CommonTokenStream(lexer)
+        parser = folParser(stream)
+        errorListener = folSyntaxErrorListener()
+        parser.removeErrorListeners()
+        parser.addErrorListener(errorListener)
+
+        # Generate Parse tree and check for syntax errors
+        tree = parser.step()
+        if not errorListener.isGood():
+            return False, None
+
+        z3 = self.visit(tree)
+        return True, z3
+
+    def visitInputArray(self, array):
+        z3 = []
+        for i in array:
+            input = InputStream(i)
+            lexer = folLexer(input)
+            stream = CommonTokenStream(lexer)
+            parser = folParser(stream)
+            tree = parser.step()
+
+            z3.append(self.visit(tree))
+        return z3
+
+
     def visitInputFile(self, file):
         lexer = folLexer(file)
         stream = CommonTokenStream(lexer)
         parser = folParser(stream)
 
         tree = parser.step()
-        print(str(self.visit(tree)))
+        return self.visit(tree);
 
 def get_args():
     parser = argparse.ArgumentParser(
@@ -261,7 +254,7 @@ def main(argv):
 
     step_input = FileStream(args.step)
     step_builder = Z3StepBuilder(param_map, predicate_map)
-    step_builder.visitInputFile(step_input)
+    print(step_builder.visitInputFile(step_input))
 
 if __name__ == '__main__':
     main(sys.argv)

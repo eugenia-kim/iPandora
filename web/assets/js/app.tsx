@@ -1,14 +1,18 @@
 import * as React from "react";
-import { Button, Intent } from "@blueprintjs/core";
+import { Button } from "@blueprintjs/core";
+import {RouteComponentProps} from "react-router";
+import { post } from "request";
 
-export class App extends React.Component<{}, {}> {
+export default class App extends React.Component<RouteComponentProps<void>, {}> {
 
   public render() {
        return (
          <div>
-               <h1>Sexy Geni.</h1>
-               <Button text="YEAH!" intent={Intent.PRIMARY} />
+           <Button text="Begin" onClick={() => post('http://localhost:8000/api/begin_proof/', (error, response, body) => {
+             this.props.history.push(new URL(response.url).pathname);
+           })} />
          </div>
        );
   }
 }
+

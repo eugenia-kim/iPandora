@@ -1,3 +1,4 @@
+import logging
 from z3 import *
 import argparse
 import sys
@@ -5,56 +6,49 @@ from Z3StepBuilder import Z3StepBuilder
 from Z3TypeBuilder import Z3TypeBuilder
 from antlr4 import *
 
+
+
 class Z3ProofBuilder():
 
-    def __init__(self, type_builder, step_builder):
-
-        # given condition in z3 formulas
-        self.givens= []
-
-        # toShow condition in z3 formula
-        self.toShow = None
-
-        self.type_builder = type_builder
+    def __init__(self, step_builder, step, given_just, step_just):
 
         self.step_builder = step_builder
 
-    def setTypes(self, declaration):
-        self.type_builder.visitInputFile(FileStream(declaration))
+        self.step = step
+        self.given_just = given_just
+        self.step_just = step_just
 
-    def setGiven(self, given):
-        z3_given = self.step_builder.visitInputFile(FileStream(given))
-        self.givens.append(z3_given)
+    def __paran(self, str):
+       return "(" + str + ")"
 
-    def setToShow(self, toShow):
-        self.toShow = self.step_builder.visitInputFile(toShow)
+    def __joinAnd(self, array):
+        return " & ".join(map((lambda l: self.__paran(l)), array))
 
-    def build(self):
-        return Z3Proof(self.givens, self.toShow, self.step_builder)
+    def __joinImplies(self, array):
+        return  " -> ".join(map((lambda l: self.__paran(l)), array))
 
-class Z3Proof():
+    def __build(self):
+        lhs = ""
+        if len(self.given_just) != 0:
+            lhs += self.__joinAnd(self.given_just)
+        if len(self.step_just) != 0:
+            if len(lhs) !=0:
+                lhs += " & "
+            lhs += self.__joinAnd(self.step_just)
 
-    def __init__(self, given, toShow, step_builder):
+        formula = self.__joinImplies([lhs, self.step])
+        valid, z3 = self.step_builder.visitInput(formula)
+        print(str(z3))
+        return z3
 
-        # given condition in z3 formula
-        self.given = given
-
-        # toShow condition in z3 formula
-        self.toShow = toShow
-
-        self.step_builder = step_builder
-
-        # step_map = [line number. z3 formula]
-        self.step_map = dict()
-
-    def __isValid(self, f):
+    def isValid(self):
         s = Solver()
-        s.add(Not(f))
+        s.add(Not(self.__build()))
         return s.check() == unsat
 
-    def __isSat(self, f):
+    def isSat(self):
         s = Solver()
-        s.add(f)
+        s.add(self.__build())
         return s.check() == sat
 
 def get_args():
@@ -74,6 +68,7 @@ def get_args():
 
 
 def main(argv):
+
     args = get_args()
 
     type_builder = Z3TypeBuilder()
@@ -86,7 +81,7 @@ def main(argv):
     step_builder = Z3StepBuilder(type_builder.param_map, type_builder.predicate_map)
 
     proof_builder = Z3ProofBuilder()
-    step_builder.visitInputFile(step_input)
+    step = step_builder.visitInputFile(step_input)
 
 if __name__ == '__main__':
     main(sys.argv)

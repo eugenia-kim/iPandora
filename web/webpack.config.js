@@ -67,7 +67,7 @@ module.exports = {
             name: 'fonts/[hash].[ext]'
           }
         }
-      }
+      },
     ],
   },
 
@@ -77,4 +77,10 @@ module.exports = {
     ],
     extensions: ['.js', '.tsx', ".ts", ".scss"]
   },
+  node: {
+    console: true,
+    fs: "empty",
+    net: "empty",
+    tls: "empty"
+  }
 }

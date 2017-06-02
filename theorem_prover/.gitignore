@@ -11,3 +11,4 @@ z3test*.py
 *.tokens
 
 QnA
+!/error/folTypeSyntaxErrorListener.py
