@@ -14,6 +14,7 @@ const mapStateToProps = (state: AppState, ownProps) => {
       return {id: d.id, text: d.text};
     }),
     givenIdList: state.given.data.map(d => d.id),
+    stepIdList: state.step.data.map(d => d.id),
     error: state.step.error,
     ...ownProps
   };

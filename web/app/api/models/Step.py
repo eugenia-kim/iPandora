@@ -12,7 +12,7 @@ from app.api.models.Proof import Proof
 class Step(models.Model):
     proofId = models.ForeignKey(Proof)
     text = models.CharField(max_length=300)
-    given_just = models.ManyToManyField(Given)
+    given_just = models.ManyToManyField(Given, blank=True, null=True)
     step_just = models.ManyToManyField("self", blank=True, null=True)
 
     @classmethod

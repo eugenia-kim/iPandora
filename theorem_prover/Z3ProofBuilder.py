@@ -32,11 +32,13 @@ class Z3ProofBuilder():
         if len(self.given_just) != 0:
             lhs += self.__joinAnd(self.given_just)
         if len(self.step_just) != 0:
-            lhs += " & "
+            if len(lhs) !=0:
+                lhs += " & "
             lhs += self.__joinAnd(self.step_just)
 
         formula = self.__joinImplies([lhs, self.step])
         valid, z3 = self.step_builder.visitInput(formula)
+        print(str(z3))
         return z3
 
     def isValid(self):
