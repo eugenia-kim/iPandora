@@ -18,7 +18,7 @@ class Step(models.Model):
     @classmethod
     def z3_valid(cls, step, param_map, predicate_map):
         step_builder = Z3StepBuilder(param_map, predicate_map)
-        valid = step_builder.visitInput(step)
+        valid, _ = step_builder.visitInput(step)
         return valid, step_builder
 
     @classmethod

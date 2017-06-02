@@ -14,7 +14,7 @@ class ToShow(models.Model):
     @classmethod
     def z3_valid(cls, toshow, param_map, predicate_map):
         step_builder = Z3StepBuilder(param_map, predicate_map)
-        valid = step_builder.visitInput(toshow)
+        valid, _ = step_builder.visitInput(toshow)
         return valid
 
 class ToShowSerializer(serializers.ModelSerializer):

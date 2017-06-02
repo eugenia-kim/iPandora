@@ -18,6 +18,14 @@ export interface ToShowData {
   text: string;
 }
 
+export interface StepData {
+  id: number;
+  proofId: string;
+  text: string;
+  given_just: number[];
+  step_just: number[];
+}
+
 export const setTypes = (dataList: TypeData[]) => {
   return {
     type: type.SET_TYPES,
@@ -39,6 +47,15 @@ export const setToShows = (dataList: ToShowData[]) => {
   }
 };
 
+export const setSteps = (dataList: StepData[]) => {
+  return {
+    type: type.SET_STEPS,
+    payload: dataList,
+  };
+};
+
+
+
 export const addType = (data: TypeData) => {
   return {
     type: type.ADD_TYPE,
@@ -57,8 +74,17 @@ export const addToShow = (data: ToShowData) => {
   return {
     type: type.ADD_TOSHOW,
     payload: data
-  }
-}
+  };
+};
+
+export const addStep = (data: StepData) => {
+  return {
+    type: type.ADD_STEP,
+    payload: data
+  };
+};
+
+
 
 export const errGiven = (error: string) => {
   return {
@@ -81,6 +107,15 @@ export const errToShow = (error: string) => {
   };
 };
 
+export const errStep = (error: string) => {
+  return {
+    type: type.ERR_STEP,
+    payload: error,
+  };
+};
+
+
+
 export const deleteType = (data: TypeData) => {
   return {
     type: type.DELETE_TYPE,
@@ -98,6 +133,13 @@ export const deleteGiven = (data: GivenData) => {
 export const deleteToShow = (data: ToShowData) => {
   return {
     type: type.DELETE_TOSHOW,
+    payload: data,
+  };
+};
+
+export const deleteStep = (data: StepData) => {
+  return {
+    type: type.DELETE_STEP,
     payload: data,
   };
 };

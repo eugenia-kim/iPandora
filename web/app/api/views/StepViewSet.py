@@ -24,6 +24,8 @@ class StepViewSet(viewsets.ModelViewSet):
     @csrf_exempt
     def create(self, request):
         serializer = StepSerializer(data=request.data)
+        logger.error(request.data)
+        logger.error(request.data.getlist('given_just'))
         if serializer.is_valid(raise_exception=True):
             # building types
             type_query = Type.objects.filter(proofId=request.data['proofId'])
@@ -59,6 +61,6 @@ class StepViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def list(self, request):
-        query = Given.objects.filter(proofId=request.query_params['proofId'])
-        serializer = GivenSerializer(query, many=True)
+        query = Step.objects.filter(proofId=request.query_params['proofId'])
+        serializer = StepSerializer(query, many=True)
         return Response(serializer.data)

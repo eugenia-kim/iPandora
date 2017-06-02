@@ -32,23 +32,7 @@ grammar fol;
  *------------------------------------------------------------------*/
 
 step
-: intermediate justification EOF
-;
-
-intermediate
-: LINE condition
-;
-
-justification
-: GIVEN | TOSHOW | ASS | (line (SEP line)*)
-;
-
-line
-: LINE // | CASE
-;
-
-condition
-: formula
+: formula EOF
 ;
 
 formula
@@ -142,22 +126,6 @@ CONSTANT
 
 PREPOSITION
 : ('A' .. 'Z') CHARACTER*
-;
-
-LINE
-: '~' ('0' .. '9')+
-;
-
-GIVEN
-: '~given'
-;
-
-TOSHOW
-: '~toShow'
-;
-
-ASS
-: '~ass'
 ;
 
 //TODO: this is not working without '~' at the front.

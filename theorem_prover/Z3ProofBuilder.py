@@ -18,14 +18,25 @@ class Z3ProofBuilder():
         self.given_just = given_just
         self.step_just = step_just
 
-    def __build(self):
-        lhs_1 = self.step_builder.visitInputArray(self.given_just)
-        logging.error(lhs_1)
-        lhs_2 = self.step_builder.visitInputArray(self.step_just)
-        rhs = self.step_builder.visitInputArray(self.step)
+    def __paran(self, str):
+       return "(" + str + ")"
 
-        z3 = Implies(And(And(*lhs_1), And(*lhs_2)), rhs)
-        print("THE PROOF WE NEED TO CHECK IS:" + z3)
+    def __joinAnd(self, array):
+        return " & ".join(map((lambda l: self.__paran(l)), array))
+
+    def __joinImplies(self, array):
+        return  " -> ".join(map((lambda l: self.__paran(l)), array))
+
+    def __build(self):
+        lhs = ""
+        if len(self.given_just) != 0:
+            lhs += self.__joinAnd(self.given_just)
+        if len(self.step_just) != 0:
+            lhs += " & "
+            lhs += self.__joinAnd(self.step_just)
+
+        formula = self.__joinImplies([lhs, self.step])
+        valid, z3 = self.step_builder.visitInput(formula)
         return z3
 
     def isValid(self):

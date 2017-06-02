@@ -32,39 +32,6 @@ class Z3StepBuilder(folVisitor):
 
     # Visit a parse tree produced by folParser#step.
     def visitStep(self, ctx: folParser.StepContext):
-        justification = self.visit(ctx.justification())
-        intermediate = self.visit(ctx.intermediate())
-        if justification == "given":
-            self.given = intermediate
-        elif justification == "toShow":
-            self.toShow = intermediate
-        else:
-            print("LINE LIST!!!!")
-        # TODO: elif justification == "ass": and line_list
-        return intermediate, justification
-
-    def visitIntermediate(self, ctx: folParser.IntermediateContext):
-        print("Intermediate")
-        condition = self.visit(ctx.condition())
-        #return ctx.LINE().getText()[1:],condition
-        return condition
-
-    def visitJustification(self, ctx: folParser.JustificationContext):
-        if ctx.line():
-            line_list = list(map((lambda l: self.visit(l)), ctx.line()))
-            return line_list
-        elif ctx.GIVEN():
-            return ctx.GIVEN().getText()[1:]
-        elif ctx.TOSHOW():
-            return ctx.TOSHOW().getText()[1:]
-        elif ctx.ASS():
-            return ctx.ASS().getText()[1:]
-
-    def visitLine(self, ctx: folParser.LineContext):
-        # TODO: add CASE once debugged in fol.g4
-        return ctx.LINE().getText()[1:]
-
-    def visitCondition(self, ctx: folParser.ConditionContext):
         return self.visit(ctx.formula())
 
     def visitFormula(self, ctx: folParser.FormulaContext):
@@ -232,10 +199,10 @@ class Z3StepBuilder(folVisitor):
         # Generate Parse tree and check for syntax errors
         tree = parser.step()
         if not errorListener.isGood():
-            return False
+            return False, None
 
         z3 = self.visit(tree)
-        return True
+        return True, z3
 
     def visitInputArray(self, array):
         z3 = []

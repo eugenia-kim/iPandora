@@ -16,7 +16,7 @@ class Given(models.Model):
     @classmethod
     def z3_valid(cls, given, param_map, predicate_map):
         step_builder = Z3StepBuilder(param_map, predicate_map)
-        valid = step_builder.visitInput(given)
+        valid, _ = step_builder.visitInput(given)
         return valid
 
 class GivenSerializer(serializers.ModelSerializer):
