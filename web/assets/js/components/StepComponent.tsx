@@ -130,11 +130,11 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
   };
 
   private deleteGivenTag = (line: number) => {
-    this.setState(assign({}, this.state, { stepLines: this.state.givenLines.splice(this.state.givenLines.indexOf(line), 1)}));
+    this.setState(assign({}, this.state, { givenLines: this.state.givenLines.filter((item) => item !== line) }));
   };
 
   private deleteStepTag = (line: number) => {
-    this.setState(assign({}, this.state, { stepLines: this.state.stepLines.splice(this.state.stepLines.indexOf(line), 1)}));
+    this.setState(assign({}, this.state, { stepLines: this.state.stepLines.filter((item) => item !== line )}));
   };
 
   private onChange = (event: React.FormEvent<HTMLElement>) => {
