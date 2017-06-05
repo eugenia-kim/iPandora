@@ -52,7 +52,10 @@ class StepViewSet(viewsets.ModelViewSet):
             logger.error(step_just)
 
             print("CHECKING IF THE PROOF IS VALID")
-            proof_valid = Step.proof_valid(step_builder, serializer.validated_data['text'], given_just, step_just)
+            try:
+                proof_valid = Step.proof_valid(step_builder, serializer.validated_data['text'], given_just, step_just)
+            except Exception as err:
+                raise Z3Exception(err, 'text', status.HTTP_400_BAD_REQUEST)
 
             if proof_valid:
                 instance = serializer.save()

@@ -46,7 +46,7 @@ class Z3StepBuilder(folVisitor):
             term = self.var_map.get(ctx.VARIABLE().getText()[1:])
             if term:
                 # TODO: throw an error (bad practice to have the same bounded variable name in between levels of scopes
-                pass
+                raise Exception("Bad practice to have the same bounded variable name in between levels of scope: " + ctx.VARIABLE.getText()[1:])
             else:
                 self.var_map[ctx.VARIABLE().getText()[1:]] = unknown
 
@@ -157,7 +157,10 @@ class Z3StepBuilder(folVisitor):
 
     def visitTerm(self, ctx: folParser.TermContext):
         if ctx.VARIABLE():
-            return ctx.VARIABLE().getText()[1:]
+            var_name = ctx.VARIABLE().getText()[1:]
+            if self.var_map.get(var_name) is None:
+                raise Exception("No variable declared: " + var_name)
+            return var_name
         else:
             return self.visit(ctx.function())
 
@@ -171,21 +174,26 @@ class Z3StepBuilder(folVisitor):
     def __add_var_map(self, name, z3):
         var = self.var_map.get(name, None)
         const = self.constant_map.get(name, None)
+        if var is not None and const is not None:
+            # Forall ?x (Friend(?x, x))
+            del self.var_map[name]
+            del self.constant_map[name]
+            raise Exception("Bounded variable and unbounded constant cannot have the same name: " + name)
         if var is unknown:
             print("Var is in the map: " + name)
             self.var_map[name] = z3
         elif const is unknown:
             print("Constant is in the map: " + name)
             self.constant_map[name] = z3
-        elif var is not None and var != z3:
-            # TODO: throw an error type error
-            print("Type Error: " + name)
+            pass
+        '''
+        This seems like it will be dealt by Z3 Exception
+         elif var is not None and var != z3:
             # {Green: _dragon, Friend: _human x _human. Forall ?x Green(?x) & (Forall ?y Friend(?x, ?y)) }
-            pass
-        else:
-            # TODO: throw an error no variable declared {Green(?x)}
-            print("ERROR DETECTED: " + name)
-            pass
+            raise "Type Error.. expected Type of " + name +  ": " + str(z3) + ", Found: " + str(var)
+        '''
+
+
 
     def visitInput(self, step):
         input = InputStream(step)
