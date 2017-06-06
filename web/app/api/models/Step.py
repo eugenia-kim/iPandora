@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from app.api.models.Box import Box
 from app.api.models.Given import Given
 from django.db import models
 
@@ -14,6 +15,8 @@ class Step(models.Model):
     text = models.CharField(max_length=300)
     given_just = models.ManyToManyField(Given, blank=True, null=True)
     step_just = models.ManyToManyField("self", blank=True, null=True)
+    boxId = models.ForeignKey(Box, blank=True, null=True)
+    firstStepInBox = models.BooleanField(default=False)
 
     @classmethod
     def z3_valid(cls, step, param_map, predicate_map):
@@ -29,4 +32,4 @@ class Step(models.Model):
 class StepSerializer(serializers.ModelSerializer):
     class Meta:
         model = Step
-        fields = ('id', 'proofId', 'text', 'given_just', 'step_just')
+        fields = ('id', 'proofId', 'text', 'given_just', 'step_just', 'boxId', 'firstStepInBox')

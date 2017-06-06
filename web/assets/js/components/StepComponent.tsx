@@ -1,18 +1,24 @@
 import * as React from "react";
-import {Alert, AnchorButton, Button, InputGroup, Intent, NumericInput, Tag, Tooltip} from "@blueprintjs/core";
+import {Alert, AnchorButton, Button, Checkbox, InputGroup, Intent, NumericInput, Tag, Tooltip} from "@blueprintjs/core";
 import {assign} from "lodash";
+import {ENGINE_METHOD_NONE} from "constants";
 
 export interface Input {
   id: number,
   text: string,
+  boxId: string,
+  firstStepInBox: boolean,
 }
 export interface StepComponentProps {
   proofId: string;
+  boxId : string; // current box
+  firstStepInBox: boolean; // current box
   inputType: string;
   givenIdList: number[];
   stepIdList: number[];
-  onAdd: (proofId: string, text: string, given_just: number[], step_just: number[]) => void;
-  onDelete: (proofId: string, id: number, text: string) => void;
+  onAdd: (proofId: string, text: string, given_just: number[], step_just: number[], boxId: string, firstStepInBox: boolean) => void;
+  onDelete: (proofId: string, id: number, text: string, boxId: string, firstStepInBox: boolean) => void;
+  onCreateBox: (boxId: string) => void;
   dataList: Input[];
   error: string;
   getData: (proofId: string) => void;
@@ -21,7 +27,7 @@ export interface StepComponentProps {
 export interface StepComponentState {
   text: string;
   givenLines: number[];
-  stepLines: number[]
+  stepLines: number[];
 }
 
 export class StepComponent extends React.Component<StepComponentProps, StepComponentState> {
@@ -39,8 +45,8 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
   }
 
   render() {
-    const { inputType, dataList, onDelete, onAdd, proofId, error, givenIdList, stepIdList, } = this.props;
-    const { text, givenLines, stepLines } = this.state;
+    const { inputType, dataList, onDelete, onAdd, onCreateBox, boxId, firstStepInBox, proofId, error, givenIdList, stepIdList, } = this.props;
+    const { text, givenLines, stepLines, } = this.state;
     let stepLine;
     let givenLine;
     let currKey = 0;
@@ -92,14 +98,21 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
             );
           })
         }
+
+        <Button
+          text="Enter Box"
+          onClick={() => onCreateBox(this.props.boxId)}
+        />
+
         <Button
           iconName="add"
           text="ADD PROOF"
           intent={Intent.PRIMARY}
           onClick={() => {
+            this.setState(assign({}, this.state, { givenLine: null, stepLine: null, }));
             const given_just = this.getIds(givenLines, givenIdList);
             const step_just = this.getIds(stepLines, stepIdList);
-            onAdd(proofId, text, given_just, step_just);
+            onAdd(proofId, text, given_just, step_just, boxId, firstStepInBox);
           }}
         />
         {
@@ -107,7 +120,7 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
             return (
               <div key={currKey++} className="pt-card">
                 [{currKey}] {item.text}
-                <AnchorButton className="pt-minimal" iconName="delete" onClick={() => onDelete(proofId, item.id, item.text)} />
+                <AnchorButton className="pt-minimal" iconName="delete" onClick={() => onDelete(proofId, item.id, item.text, item.boxId, item.firstStepInBox)} />
               </div>
             );
           })
@@ -137,8 +150,13 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
     this.setState(assign({}, this.state, { stepLines: this.state.stepLines.filter((item) => item !== line )}));
   };
 
-  private onChange = (event: React.FormEvent<HTMLElement>) => {
+  private onChange = (event: React.FormEvent<HTMLInputElement>) => {
     const text = (event.target as HTMLInputElement).value;
     this.setState(assign({}, this.state, { text }));
+  };
+
+  private handleAssume = (event: React.FormEvent<HTMLInputElement>) => {
+    const checked = (event.target as HTMLInputElement).value;
+    this.setState(assign({}, this.state, { assume: checked }));
   };
 }

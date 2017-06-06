@@ -22,3 +22,7 @@ export const DELETE_TYPE = 'DELETE_TYPE';
 export const DELETE_GIVEN = 'DELETE_GIVEN';
 export const DELETE_TOSHOW = 'DELETE_TOSHOW';
 export const DELETE_STEP = 'DELETE_STEP';
+
+export const CREATE_BOX = 'CREATE_BOX';
+export const UPDATE_BOX = 'UPDATE_BOX';
+export const ASSUME_BOX = 'ASSUME_BOX';

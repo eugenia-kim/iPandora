@@ -33,14 +33,22 @@ class StepViewSet(viewsets.ModelViewSet):
             type_valid, param_map, predicate_map = Type.get_maps(types)
             if not type_valid:
                 raise Z3Exception('Type Declarations Error', 'text', status.HTTP_400_BAD_REQUEST)
-
+            print("BUILDING STEP NOW")
             # building step
             try:
                 step_valid, step_builder = Step.z3_valid(serializer.validated_data['text'], param_map, predicate_map)
+                print(step_valid)
             except Exception as err:
                 raise Z3Exception(err, 'text', status.HTTP_400_BAD_REQUEST)
+
             if not step_valid:
                 raise Z3Exception('Syntax Error', 'text', status.HTTP_400_BAD_REQUEST)
+            elif serializer.validated_data['firstStepInBox']:
+                # Assumption
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+
+            #checking the justifications
             proofId = request.data.get('proofId')
             given_ids = [g for g in request.data.getlist('given_just')]
             step_ids = [s for s in request.data.getlist('step_just')]
@@ -51,7 +59,6 @@ class StepViewSet(viewsets.ModelViewSet):
             logger.error(given_just)
             logger.error(step_just)
 
-            print("CHECKING IF THE PROOF IS VALID")
             try:
                 proof_valid = Step.proof_valid(step_builder, serializer.validated_data['text'], given_just, step_just)
             except Exception as err:

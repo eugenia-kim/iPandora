@@ -24,6 +24,14 @@ export interface StepData {
   text: string;
   given_just: number[];
   step_just: number[];
+  boxId: string;
+  firstStepInBox: boolean;
+}
+
+export interface BoxData {
+  boxId: string;
+  firstStepInBox: boolean;
+  step: StepData
 }
 
 export const setTypes = (dataList: TypeData[]) => {
@@ -144,3 +152,23 @@ export const deleteStep = (data: StepData) => {
   };
 };
 
+export const createBox = (boxId : string) => {
+  return {
+    type: type.CREATE_BOX,
+    payload: boxId,
+  };
+};
+
+export const updateBox = (data: StepData) => {
+  return {
+    type: type.UPDATE_BOX,
+    payload: data,
+  };
+};
+
+export const assumeBox = (data: StepData) => {
+ return {
+   type: type.ASSUME_BOX,
+   payload: data,
+ };
+};

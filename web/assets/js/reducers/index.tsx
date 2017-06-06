@@ -1,13 +1,21 @@
 import * as actionType from "../constants/type"
 import { assign } from "lodash"
 import {combineReducers} from "redux";
-import {GivenData, StepData, ToShowData, TypeData} from "../actions/index";
+import {BoxData, GivenData, StepData, ToShowData, TypeData} from "../actions/index";
 
 export interface AppState {
   given: InputState<GivenData>;
   type: InputState<TypeData>;
   toShow: InputState<ToShowData>;
   step: InputState<StepData>;
+  box: BoxState;
+}
+
+export interface BoxState {
+  boxStack: string[];
+  firstStepMap: { boxId: string, step: StepData }[]
+  lastStep: StepData;
+  isEmpty: boolean;
 }
 
 export interface InputState<T> {
@@ -23,6 +31,13 @@ export interface Action<T> {
 const initInputState  = {
   data: [],
   error: "",
+};
+
+const initBoxState = {
+  boxStack : [],
+  firstStepMap: [],
+  lastStep : null,
+  isEmpty : false,
 };
 
 export function givenReducer(state: InputState<GivenData> = initInputState,
@@ -147,11 +162,40 @@ export function stepReducer(state: InputState<StepData> = initInputState,
   }
 }
 
+export function boxReducer(state: BoxState = initBoxState,
+                           action: Action<string> | Action<StepData>) {
+  switch (action.type) {
+    case actionType.CREATE_BOX:
+      return assign({}, state, {
+        boxStack: [...state.boxStack, action.payload],
+        isEmpty: true,
+      });
+
+    case actionType.ASSUME_BOX:
+      return assign({}, state, {
+        isEmpty: false,
+        lastStep: (action as Action<StepData>).payload,
+        firstStepMap: [
+          ...state.firstStepMap,
+          {boxId: (action as Action<StepData>).payload.boxId, step: (action as Action<StepData>).payload }
+          ],
+      });
+
+    case actionType.UPDATE_BOX:
+      return assign({}, state, {
+        lastStep: (action as Action<StepData>).payload
+      });
+
+    default:
+      return state;
+  }
+}
+
 export default combineReducers({
   given: givenReducer,
   type: typeReducer,
   toShow: toShowReducer,
   step: stepReducer,
+  box: boxReducer,
 });
-
 
