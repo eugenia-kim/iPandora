@@ -26,3 +26,4 @@ export const DELETE_STEP = 'DELETE_STEP';
 export const CREATE_BOX = 'CREATE_BOX';
 export const UPDATE_BOX = 'UPDATE_BOX';
 export const ASSUME_BOX = 'ASSUME_BOX';
+export const END_BOX = 'END_BOX';

@@ -4,20 +4,24 @@ import {StepComponent} from "../components/StepComponent";
 import {connect} from "react-redux";
 import { del, get, post} from "request";
 import {
-  addStep, assumeBox, createBox, deleteStep, errStep, setSteps, updateBox,
+  addStep, assumeBox, createBox, deleteStep, endBox, errStep, setSteps, updateBox,
 } from "../actions/index";
 import { last, assign } from "lodash";
 
 const mapStateToProps = (state: AppState, ownProps) => {
+  const boxId = last(state.box.boxStack);
+
   return {
     dataList: state.step.data.map(d => {
-      return {id: d.id, text: d.text, boxId: d.boxId, firstStepInBox: d.firstStepInBox};
+      return {id: d.id, text: d.text, boxId: d.boxId, isFirstStepInBox: d.isFirstStepInBox};
     }),
     givenIdList: state.given.data.map(d => d.id),
     stepIdList: state.step.data.map(d => d.id),
     error: state.step.error,
-    boxId: last(state.box.boxStack),
-    firstStepInBox: state.box.isEmpty,
+    boxId: boxId,
+    isFirstStepInBox: state.box.isEmpty,
+    firstStepInBox: state.box.firstStepMap[boxId],
+    lastStepInBox: state.box.lastStep,
     ...ownProps
   };
 };
@@ -32,12 +36,12 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<string>>) => {
       )
     },
 
-    onAdd: (proofId: string, text: string, given_just:number[], step_just: number[], boxId: string, firstStepInBox: boolean) => {
+    onAdd: (proofId: string, text: string, given_just:number[], step_just: number[], boxId: string, isFirstStepInBox: boolean) => {
 
-      if (firstStepInBox) {
+      if (isFirstStepInBox) {
         post(
           {json: true, url: 'http://localhost:8000/api/step/',
-            form: {proofId: proofId, text: text, boxId: boxId, firstStepInBox: firstStepInBox}},
+            form: {proofId: proofId, text: text, boxId: boxId, isFirstStepInBox: isFirstStepInBox}},
           (error, response, body) => {
             if (response.statusCode === 400) {
               // TODO: if not validated with Z3 grammar
@@ -53,7 +57,7 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<string>>) => {
       } else {
         post(
           {json: true, url: 'http://localhost:8000/api/step/',
-            form: {proofId: proofId, text: text, given_just: given_just, step_just: step_just, boxId: boxId, firstStepInBox: firstStepInBox},
+            form: {proofId: proofId, text: text, given_just: given_just, step_just: step_just, boxId: boxId, isFirstStepInBox: isFirstStepInBox},
             qsStringifyOptions: {arrayFormat: 'repeat'}},
           (error, response, body) => {
             if (response.statusCode === 400) {
@@ -68,22 +72,39 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<string>>) => {
       }
     },
 
-    onDelete: (proofId: string, id: number, text: string, boxId: string, firstStepInBox: boolean) => {
+    onDelete: (proofId: string, id: number, text: string, boxId: string, isFirstStepInBox: boolean) => {
       del({json: true, url: 'http://localhost:8000/api/step/' + id + '/'},
         (error, response, body) => {
-          dispatch(deleteStep({proofId: proofId, id: id, text: text, step_just: [], given_just: [], firstStepInBox: firstStepInBox, boxId: boxId}));
-          // TODO if firstStepInBox, then make box isEmpty true
+          dispatch(deleteStep({proofId: proofId, id: id, text: text, step_just: [], given_just: [], isFirstStepInBox: isFirstStepInBox, boxId: boxId}));
+          // TODO if isFirstStepInBox, then make box isEmpty true
         }
       )
     },
 
     onCreateBox: (proofId: string, boxId: string) => {
       post(
-        {json: true, url: 'http://localhost:8000/api/box/', form: { proofId: proofId, parentId: boxId, }},
+        {json: true, url: 'http://localhost:8000/api/box/', form: {proofId: proofId, parentId: boxId,}},
         (error, response, body) => {
           dispatch(createBox(body));
         })
     },
+
+    onEndBox: (proofId: string, text: string, step_just: number[], boxId: string) => {
+      post(
+        {json: true, url: 'http://localhost:8000/api/step/',
+         form: { proofId, text, step_just, boxId, },
+         qsStringifyOptions: {arrayFormat: 'repeat'}},
+        (error, response, body) => {
+          if (response.statusCode === 400) {
+            dispatch(errStep(body['text']));
+          } else {
+            dispatch(endBox(body));
+            dispatch(addStep(body));
+            dispatch(updateBox(body));
+          }
+        }
+      )
+    }
   };
 };
 

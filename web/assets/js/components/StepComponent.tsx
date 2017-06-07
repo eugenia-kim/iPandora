@@ -2,23 +2,28 @@ import * as React from "react";
 import {Alert, AnchorButton, Button, Checkbox, InputGroup, Intent, NumericInput, Tag, Tooltip} from "@blueprintjs/core";
 import {assign} from "lodash";
 import {ENGINE_METHOD_NONE} from "constants";
+import {StepData} from "../actions/index";
+import {createImplication} from "../model/logicFormulaCreators";
 
 export interface Input {
   id: number,
   text: string,
   boxId: string,
-  firstStepInBox: boolean,
+  isFirstStepInBox: boolean,
 }
 export interface StepComponentProps {
   proofId: string;
   boxId : string; // current box
-  firstStepInBox: boolean; // current box
+  isFirstStepInBox: boolean; // current box
+  firstStepInBox: StepData;
+  lastStepInBox: StepData;
   inputType: string;
   givenIdList: number[];
   stepIdList: number[];
-  onAdd: (proofId: string, text: string, given_just: number[], step_just: number[], boxId: string, firstStepInBox: boolean) => void;
-  onDelete: (proofId: string, id: number, text: string, boxId: string, firstStepInBox: boolean) => void;
+  onAdd: (proofId: string, text: string, given_just: number[], step_just: number[], boxId: string, isFirstStepInBox: boolean) => void;
+  onDelete: (proofId: string, id: number, text: string, boxId: string, isFirstStepInBox: boolean) => void;
   onCreateBox: (proofId: string, boxId: string) => void;
+  onEndBox: (proofId: string, text: string, step_just: number[], boxId: string) => void;
   dataList: Input[];
   error: string;
   getData: (proofId: string) => void;
@@ -45,7 +50,7 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
   }
 
   render() {
-    const { inputType, dataList, onDelete, onAdd, onCreateBox, boxId, firstStepInBox, proofId, error, givenIdList, stepIdList, } = this.props;
+    const { inputType, dataList, onDelete, onAdd, onCreateBox, onEndBox, boxId, isFirstStepInBox, firstStepInBox, lastStepInBox, proofId, error, givenIdList, stepIdList, } = this.props;
     const { text, givenLines, stepLines, } = this.state;
     let stepLine;
     let givenLine;
@@ -103,7 +108,14 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
           text="Enter Box"
           onClick={() => onCreateBox(proofId, boxId)}
         />
-
+        <Button
+          text="End Box"
+          onClick={() => {
+            const text = createImplication(firstStepInBox.text, lastStepInBox.text);
+            const step_just = [firstStepInBox.id, lastStepInBox.id];
+            onEndBox(proofId,text, step_just, boxId)
+          }}
+        />
         <Button
           iconName="add"
           text="ADD PROOF"
@@ -112,7 +124,7 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
             this.setState(assign({}, this.state, { givenLine: null, stepLine: null, }));
             const given_just = this.getIds(givenLines, givenIdList);
             const step_just = this.getIds(stepLines, stepIdList);
-            onAdd(proofId, text, given_just, step_just, boxId, firstStepInBox);
+            onAdd(proofId, text, given_just, step_just, boxId, isFirstStepInBox);
           }}
         />
         {
@@ -120,7 +132,7 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
             return (
               <div key={currKey++} className="pt-card">
                 [{currKey}] {item.text}
-                <AnchorButton className="pt-minimal" iconName="delete" onClick={() => onDelete(proofId, item.id, item.text, item.boxId, item.firstStepInBox)} />
+                <AnchorButton className="pt-minimal" iconName="delete" onClick={() => onDelete(proofId, item.id, item.text, item.boxId, item.isFirstStepInBox)} />
               </div>
             );
           })

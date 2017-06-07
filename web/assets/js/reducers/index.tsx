@@ -1,4 +1,4 @@
-import * as actionType from "../constants/type"
+import * as actionType from "../model/type"
 import { assign } from "lodash"
 import {combineReducers} from "redux";
 import {BoxData, GivenData, StepData, ToShowData, TypeData} from "../actions/index";
@@ -14,7 +14,7 @@ export interface AppState {
 export interface BoxState {
   proofId : string;
   boxStack: string[];
-  firstStepMap: { boxId: string, step: StepData }[]
+  firstStepMap: { [boxId: string]: StepData };
   lastStep: StepData;
   isEmpty: boolean;
 }
@@ -37,7 +37,7 @@ const initInputState  = {
 const initBoxState = {
   proofId: null,
   boxStack : [],
-  firstStepMap: [],
+  firstStepMap: {},
   lastStep : null,
   isEmpty : false,
 };
@@ -175,19 +175,31 @@ export function boxReducer(state: BoxState = initBoxState,
       });
 
     case actionType.ASSUME_BOX:
+      const typedAction = action as Action<StepData>;
+      const boxId = typedAction.payload.boxId;
+      const step = typedAction.payload;
+
       return assign({}, state, {
-        proofId: (action as Action<StepData>).payload.proofId,
+        proofId: typedAction.payload.proofId,
         isEmpty: false,
-        lastStep: (action as Action<StepData>).payload,
-        firstStepMap: [
+        lastStep: typedAction.payload,
+        firstStepMap: {
           ...state.firstStepMap,
-          {boxId: (action as Action<StepData>).payload.boxId, step: (action as Action<StepData>).payload }
-          ],
+          [boxId]: step,
+          },
       });
 
     case actionType.UPDATE_BOX:
       return assign({}, state, {
         lastStep: (action as Action<StepData>).payload
+      });
+
+    case actionType.END_BOX:
+      const stack = state.boxStack.slice();
+      stack.pop();
+      return assign({}, state, {
+        isEmpty: false,
+        boxStack: stack,
       });
 
     default:

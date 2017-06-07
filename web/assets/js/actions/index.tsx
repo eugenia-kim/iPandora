@@ -1,4 +1,4 @@
-import * as type from "../constants/type"
+import * as type from "../model/type"
 
 export interface TypeData {
   id: number;
@@ -25,7 +25,7 @@ export interface StepData {
   given_just: number[];
   step_just: number[];
   boxId: string;
-  firstStepInBox: boolean;
+  isFirstStepInBox: boolean;
 }
 
 export interface BoxData {
@@ -171,4 +171,11 @@ export const assumeBox = (data: StepData) => {
    type: type.ASSUME_BOX,
    payload: data,
  };
+};
+
+export const endBox = (data: StepData) => {
+  return {
+    type: type.END_BOX,
+    payload: data, // not used though
+  };
 };
