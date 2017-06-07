@@ -24,7 +24,7 @@ export interface StepComponentProps {
   onDelete: (proofId: string, id: number, text: string, boxId: string, isFirstStepInBox: boolean) => void;
   onCreateBox: (proofId: string, boxId: string) => void;
   onEndBox: (proofId: string, text: string, step_just: number[], boxId: string) => void;
-  dataList: Input[];
+  dataList: StepData[];
   error: string;
   getData: (proofId: string) => void;
 }
@@ -57,6 +57,8 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
     let currKey = 0;
     let tagGivenKey = 0;
     let tagStepKey = 0;
+    let givenJustKey = 0;
+    let stepJustKey = 0;
     return (
       <div>
         <InputGroup
@@ -75,6 +77,7 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
         <NumericInput
           placeholder="Given Line Numbers"
           value={givenLine}
+          intent={Intent.SUCCESS}
           onValueChange={(valueAsNumber: number, valueAsString: string) => {
             givenLine = valueAsNumber;
           }}
@@ -83,13 +86,14 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
         {
           givenLines.map( (line: number) => {
             return (
-              <Tag key={tagGivenKey++} intent={Intent.PRIMARY} onRemove={() => this.deleteGivenTag(line)}> {line} </Tag>
+              <Tag key={tagGivenKey++} intent={Intent.SUCCESS} onRemove={() => this.deleteGivenTag(line)}> {line} </Tag>
             );
           })
         }
         <NumericInput
           placeholder="Step Line Numbers"
           value={stepLine}
+          intent={Intent.WARNING}
           onValueChange={(valueAsNumber: number, valueAsString: string) => {
             stepLine = valueAsNumber;
           }}
@@ -99,7 +103,7 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
         {
           stepLines.map((line: number) => {
             return (
-              <Tag key={tagStepKey++} intent={Intent.PRIMARY} onRemove={() => this.deleteStepTag(line)}> {line} </Tag>
+              <Tag key={tagStepKey++} intent={Intent.WARNING} onRemove={() => this.deleteStepTag(line)}> {line} </Tag>
             );
           })
         }
@@ -128,10 +132,27 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
           }}
         />
         {
-          dataList.map( (item: Input) => {
+          dataList.map( (item: StepData) => {
             return (
               <div key={currKey++} className="pt-card">
                 [{currKey}] {item.text}
+                {
+                  this.assTag(item.isFirstStepInBox)
+                }
+                {
+                  item.given_just.map( (n: number) => {
+                    return (
+                      <Tag key={givenJustKey++} intent={Intent.SUCCESS}> {givenIdList.indexOf(n) + 1} </Tag>
+                    );
+                  })
+                }
+                {
+                  item.step_just.map( (n: number) => {
+                    return (
+                      <Tag key={stepJustKey++} intent={Intent.WARNING}> {stepIdList.indexOf(n) + 1} </Tag>
+                    );
+                  })
+                }
                 <AnchorButton className="pt-minimal" iconName="delete" onClick={() => onDelete(proofId, item.id, item.text, item.boxId, item.isFirstStepInBox)} />
               </div>
             );
@@ -170,5 +191,13 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
   private handleAssume = (event: React.FormEvent<HTMLInputElement>) => {
     const checked = (event.target as HTMLInputElement).value;
     this.setState(assign({}, this.state, { assume: checked }));
+  };
+
+  private  assTag = (flag: boolean) => {
+    if (flag) {
+      return (
+        <Tag intent={Intent.DANGER} > ass </Tag>
+      );
+    }
   };
 }

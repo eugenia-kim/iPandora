@@ -12,9 +12,7 @@ const mapStateToProps = (state: AppState, ownProps) => {
   const boxId = last(state.box.boxStack);
 
   return {
-    dataList: state.step.data.map(d => {
-      return {id: d.id, text: d.text, boxId: d.boxId, isFirstStepInBox: d.isFirstStepInBox};
-    }),
+    dataList: state.step.data,
     givenIdList: state.given.data.map(d => d.id),
     stepIdList: state.step.data.map(d => d.id),
     error: state.step.error,
