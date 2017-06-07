@@ -29,9 +29,9 @@ export interface StepData {
 }
 
 export interface BoxData {
-  boxId: string;
-  firstStepInBox: boolean;
-  step: StepData
+  id: string;
+  proofId: string;
+  parentId: string;
 }
 
 export const setTypes = (dataList: TypeData[]) => {
@@ -152,10 +152,10 @@ export const deleteStep = (data: StepData) => {
   };
 };
 
-export const createBox = (boxId : string) => {
+export const createBox = (data: BoxData) => {
   return {
     type: type.CREATE_BOX,
-    payload: boxId,
+    payload: data,
   };
 };
 

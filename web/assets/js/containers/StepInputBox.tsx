@@ -77,11 +77,11 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<string>>) => {
       )
     },
 
-    onCreateBox: (boxId: string) => {
+    onCreateBox: (proofId: string, boxId: string) => {
       post(
-        {json: true, url: 'http://localhost:8000/api/box/', form: {parentId: boxId, }},
+        {json: true, url: 'http://localhost:8000/api/box/', form: { proofId: proofId, parentId: boxId, }},
         (error, response, body) => {
-          dispatch(createBox(body['id']));
+          dispatch(createBox(body));
         })
     },
   };

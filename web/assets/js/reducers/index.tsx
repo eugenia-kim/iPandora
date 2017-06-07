@@ -12,6 +12,7 @@ export interface AppState {
 }
 
 export interface BoxState {
+  proofId : string;
   boxStack: string[];
   firstStepMap: { boxId: string, step: StepData }[]
   lastStep: StepData;
@@ -34,6 +35,7 @@ const initInputState  = {
 };
 
 const initBoxState = {
+  proofId: null,
   boxStack : [],
   firstStepMap: [],
   lastStep : null,
@@ -163,16 +165,18 @@ export function stepReducer(state: InputState<StepData> = initInputState,
 }
 
 export function boxReducer(state: BoxState = initBoxState,
-                           action: Action<string> | Action<StepData>) {
+                           action: Action<BoxData> | Action<StepData>) {
   switch (action.type) {
     case actionType.CREATE_BOX:
       return assign({}, state, {
-        boxStack: [...state.boxStack, action.payload],
+        proofId: action.payload.proofId,
+        boxStack: [...state.boxStack, action.payload.id],
         isEmpty: true,
       });
 
     case actionType.ASSUME_BOX:
       return assign({}, state, {
+        proofId: (action as Action<StepData>).payload.proofId,
         isEmpty: false,
         lastStep: (action as Action<StepData>).payload,
         firstStepMap: [

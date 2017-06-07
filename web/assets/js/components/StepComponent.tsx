@@ -18,7 +18,7 @@ export interface StepComponentProps {
   stepIdList: number[];
   onAdd: (proofId: string, text: string, given_just: number[], step_just: number[], boxId: string, firstStepInBox: boolean) => void;
   onDelete: (proofId: string, id: number, text: string, boxId: string, firstStepInBox: boolean) => void;
-  onCreateBox: (boxId: string) => void;
+  onCreateBox: (proofId: string, boxId: string) => void;
   dataList: Input[];
   error: string;
   getData: (proofId: string) => void;
@@ -101,7 +101,7 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
 
         <Button
           text="Enter Box"
-          onClick={() => onCreateBox(this.props.boxId)}
+          onClick={() => onCreateBox(proofId, boxId)}
         />
 
         <Button
