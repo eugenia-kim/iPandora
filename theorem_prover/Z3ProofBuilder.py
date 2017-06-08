@@ -36,7 +36,11 @@ class Z3ProofBuilder():
                 lhs += " & "
             lhs += self.__joinAnd(self.step_just)
 
-        formula = self.__joinImplies([lhs, self.step])
+        if(len(lhs) > 0):
+            formula = self.__joinImplies([lhs, self.step])
+        else :
+            formula = self.step
+
         valid, z3 = self.step_builder.visitInput(formula)
         print(str(z3))
         return z3

@@ -229,9 +229,15 @@ class Z3StepBuilder(folVisitor):
         lexer = folLexer(file)
         stream = CommonTokenStream(lexer)
         parser = folParser(stream)
+        errorListener = folSyntaxErrorListener()
+        parser.removeErrorListeners()
+        parser.addErrorListener(errorListener)
 
         tree = parser.step()
-        return self.visit(tree);
+        if not errorListener.isGood():
+            print("HI")
+            return None
+        return self.visit(tree)
 
 def get_args():
     parser = argparse.ArgumentParser(

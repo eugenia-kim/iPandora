@@ -16,7 +16,7 @@ class folTypeSyntaxErrorListener( ErrorListener ):
 
     def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
         #self.error.append("\nSYNTAX ERROR")
-        #self.error.append("(" + str(line) + ":" + str(column) + ") " + str(msg))
+        print("(" + str(line) + ":" + str(column) + ") " + str(msg))
         self.good = False
 
     def reportAmbiguity(self, recognizer, dfa, startIndex, stopIndex, exact, ambigAlts, configs):

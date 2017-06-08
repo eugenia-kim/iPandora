@@ -29,6 +29,11 @@ class Step(models.Model):
         proof_builder = Z3ProofBuilder(step_builder, step, given_just, step_just)
         return proof_builder.isValid()
 
+    @classmethod
+    def proof_sat(cls, step_builder, step, given_just, step_just):
+        proof_builder = Z3ProofBuilder(step_builder, step, given_just, step_just)
+        return proof_builder.isSat()
+
 class StepSerializer(serializers.ModelSerializer):
     class Meta:
         model = Step

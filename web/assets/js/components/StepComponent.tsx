@@ -4,6 +4,7 @@ import {assign} from "lodash";
 import {ENGINE_METHOD_NONE} from "constants";
 import {StepData} from "../actions/index";
 import {createImplication} from "../model/logicFormulaCreators";
+import {BoxButtonComponent} from "./BoxButtonComponent";
 
 export interface Input {
   id: number,
@@ -18,7 +19,7 @@ export interface StepComponentProps {
   firstStepInBox: StepData;
   lastStepInBox: StepData;
   inputType: string;
-  givenIdList: number[];
+  givenIdList: number[]; // linenumber -> id
   stepIdList: number[];
   onAdd: (proofId: string, text: string, given_just: number[], step_just: number[], boxId: string, isFirstStepInBox: boolean) => void;
   onDelete: (proofId: string, id: number, text: string, boxId: string, isFirstStepInBox: boolean) => void;
@@ -117,7 +118,7 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
           onClick={() => {
             const text = createImplication(firstStepInBox.text, lastStepInBox.text);
             const step_just = [firstStepInBox.id, lastStepInBox.id];
-            onEndBox(proofId,text, step_just, boxId)
+            onEndBox(proofId,text, step_just, boxId);
           }}
         />
         <Button
@@ -125,7 +126,7 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
           text="ADD PROOF"
           intent={Intent.PRIMARY}
           onClick={() => {
-            this.setState(assign({}, this.state, { givenLine: null, stepLine: null, }));
+            this.setState( assign({}, this.state, { givenLine: null, stepLine: null }) );
             const given_just = this.getIds(givenLines, givenIdList);
             const step_just = this.getIds(stepLines, stepIdList);
             onAdd(proofId, text, given_just, step_just, boxId, isFirstStepInBox);
@@ -159,9 +160,40 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
           })
         }
 
+
+        <Button
+          text="Exist Elim"
+          onClick={() => onCreateBox(proofId, boxId)}
+        />
+        <Button
+          text="Finish Exist Elim"
+          onClick={() => {
+            const text = lastStepInBox.text;
+            const firstStepId = firstStepInBox.id;
+            const lastStepId = lastStepInBox.id;
+            const step_just = [this.getPrevId(firstStepId, stepIdList), firstStepId, lastStepId];
+            onEndBox(proofId, text, step_just, boxId);
+          }}
+        />
+
+        {/*<BoxButtonComponent*/}
+          {/*type="Exists E"*/}
+          {/*proofId={proofId}*/}
+          {/*text={lastStepInBox.text}*/}
+          {/*step_just={[this.getPrevId(firstStepInBox.id, stepIdList), firstStepInBox.id, lastStepInBox.id]}*/}
+          {/*boxId={boxId}*/}
+          {/*onCreateBox={onCreateBox}*/}
+          {/*onEndBox={onEndBox}*/}
+        {/*/>*/}
+
+
       </div>
     );
   }
+
+  private getPrevId = (id:number, ids: number[]) => {
+    return ids[ids.indexOf(id) - 1];
+  };
 
   private getIds = (lines: number[], ids: number[]) => {
     return lines.map(l => ids[l - 1])
