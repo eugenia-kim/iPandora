@@ -38,13 +38,15 @@ export class AddInputBox extends React.Component<AddInputBoxProps, AddInputBoxSt
 
     return (
       <div>
-        <InputGroup
-          placeholder={"Enter " + inputType + "..."}
-          value={text}
-          onChange={this.onChange}
-          rightElement={this.renderError()}
-        />
-        <AnchorButton className="pt-minimal" iconName="add" onClick={this.onAdd} />
+        <div className="add-group">
+          <InputGroup
+            placeholder={"Enter " + inputType + "..."}
+            value={text}
+            onChange={this.onChange}
+            rightElement={this.renderError()}
+          />
+          <AnchorButton className="pt-minimal" iconName="add" onClick={this.onAdd} />
+        </div>
         {this.renderData()}
       </div>
     );
@@ -62,9 +64,9 @@ export class AddInputBox extends React.Component<AddInputBoxProps, AddInputBoxSt
     onAdd(proofId, text);
   }
 
-  private createOnDeleteHandler = (proofId, itemId, itemText) => () => {
+  private createOnDeleteHandler = (proofId: string, item: Input) => () => {
     const { onDelete } = this.props;
-    onDelete(proofId, itemId, itemText);
+    onDelete(proofId, item.id, item.text);
   }
 
   private renderData = () => {
@@ -79,7 +81,7 @@ export class AddInputBox extends React.Component<AddInputBoxProps, AddInputBoxSt
           <AnchorButton
             className="pt-minimal"
             iconName="delete"
-            onClick={this.createOnDeleteHandler(proofId, item.id, item.text)}
+            onClick={this.createOnDeleteHandler(proofId, item)}
           />
         </div>
       );

@@ -1,13 +1,13 @@
 import { assign } from "lodash";
 import { combineReducers } from "redux";
 
-import { BoxData, GivenData, StepData, ToShowData, TypeData } from "../actions/index";
+import { BoxData, InitializerData, StepData } from "../actions/index";
 import * as actionType from "../model/type";
 
 export interface AppState {
-  given: InputState<GivenData>;
-  type: InputState<TypeData>;
-  toShow: InputState<ToShowData>;
+  given: InputState<InitializerData>;
+  type: InputState<InitializerData>;
+  toShow: InputState<InitializerData>;
   step: InputState<StepData>;
   box: BoxState;
 }
@@ -30,12 +30,12 @@ export interface Action<T> {
   payload: T;
 }
 
-const initInputState  = {
-  data: [],
+const initInputState = {
+  data: Array<InitializerData>(),
   error: "",
 };
 
-const initBoxState = {
+const initBoxState: BoxState = {
   boxStack : [],
   firstStepMap: {},
   isEmpty : false,
@@ -43,12 +43,12 @@ const initBoxState = {
   proofId: null,
 };
 
-export function givenReducer(state: InputState<GivenData> = initInputState,
-                             action: Action<GivenData> | Action<GivenData[]> | Action<string>) {
+export function givenReducer(state: InputState<InitializerData> = initInputState,
+                             action: Action<InitializerData> | Action<InitializerData[]> | Action<string>) {
   switch (action.type) {
     case actionType.SET_GIVENS:
       return assign({}, state, {
-        data: (action as Action<GivenData[]>).payload,
+        data: (action as Action<InitializerData[]>).payload,
         error: "",
       });
 
@@ -65,7 +65,7 @@ export function givenReducer(state: InputState<GivenData> = initInputState,
 
     case actionType.DELETE_GIVEN:
       return assign({}, state, {
-        data: state.data.filter(item => item.id !== (action as Action<GivenData>).payload.id),
+        data: state.data.filter(item => item.id !== (action as Action<InitializerData>).payload.id),
       });
 
     default:
@@ -73,13 +73,13 @@ export function givenReducer(state: InputState<GivenData> = initInputState,
   }
 }
 
-export function typeReducer(state: InputState<TypeData> = initInputState,
-                            action: Action<TypeData> | Action<TypeData[]> | Action<string>) {
+export function typeReducer(state: InputState<InitializerData> = initInputState,
+                            action: Action<InitializerData> | Action<InitializerData[]> | Action<string>) {
   switch (action.type) {
 
     case actionType.SET_TYPES:
       return assign({}, state, {
-        data: (action as Action<TypeData[]>).payload,
+        data: (action as Action<InitializerData[]>).payload,
         error: "",
       });
 
@@ -97,7 +97,7 @@ export function typeReducer(state: InputState<TypeData> = initInputState,
 
     case actionType.DELETE_TYPE:
       return assign({}, state, {
-        data: state.data.filter(item => item.id !== (action as Action<TypeData>).payload.id),
+        data: state.data.filter(item => item.id !== (action as Action<InitializerData>).payload.id),
       });
 
     default:
@@ -105,12 +105,12 @@ export function typeReducer(state: InputState<TypeData> = initInputState,
   }
 }
 
-export function toShowReducer(state: InputState<ToShowData> = initInputState,
-                              action: Action<ToShowData> | Action<ToShowData[]> | Action<string>) {
+export function toShowReducer(state: InputState<InitializerData> = initInputState,
+                              action: Action<InitializerData> | Action<InitializerData[]> | Action<string>) {
   switch (action.type) {
     case actionType.SET_TOSHOWS:
       return assign({}, state, {
-        data: (action as Action<ToShowData[]>).payload,
+        data: (action as Action<InitializerData[]>).payload,
         error: "",
       });
 
@@ -127,7 +127,7 @@ export function toShowReducer(state: InputState<ToShowData> = initInputState,
 
     case actionType.DELETE_TOSHOW:
       return assign({}, state, {
-        data: state.data.filter(item => item.id !== (action as Action<ToShowData>).payload.id),
+        data: state.data.filter(item => item.id !== (action as Action<InitializerData>).payload.id),
       });
 
     default:
@@ -135,7 +135,7 @@ export function toShowReducer(state: InputState<ToShowData> = initInputState,
   }
 }
 
-export function stepReducer(state: InputState<StepData> = initInputState,
+export function stepReducer(state: InputState<StepData> = { data: Array<StepData>(), error: "" },
                             action: Action<StepData> | Action<StepData[]> | Action<string>) {
   switch (action.type) {
     case actionType.SET_STEPS:

@@ -16,7 +16,7 @@ import {
 import { StepComponent } from "../components/StepComponent";
 import { Action, AppState } from "../reducers/index";
 
-const mapStateToProps = (state: AppState, ownProps) => {
+const mapStateToProps = (state: AppState, ownProps: any) => {
   const boxId = last(state.box.boxStack);
 
   return {

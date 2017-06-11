@@ -233,16 +233,18 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
       ));
   }
 
-  private renderProofLines = (lines, intent, createOnDeleteHandler) =>
+  private renderProofLines = (lines: number[],
+                              intent: Intent,
+                              createOnDeleteHandler: (line: number) => (() => void)) =>
     lines.map(line => (<Tag key={line} intent={intent} onRemove={createOnDeleteHandler(line)}>{line}</Tag>))
 
-  private renderJustificationList = (list, idList, intent) => {
+  private renderJustificationList = (list: number[], idList: number[], intent: Intent) => {
     return list.map((n: number) => (
       <Tag key={n} intent={intent}>{idList.indexOf(n) + 1}</Tag>
     ));
   }
 
-  private createOnDeleteStepHandler = (proofId, item) => () => {
+  private createOnDeleteStepHandler = (proofId: string, item: StepData) => () => {
     const { onDelete } = this.props;
 
     onDelete(proofId, item.id, item.text, item.boxId, item.isFirstStepInBox);
