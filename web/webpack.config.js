@@ -26,6 +26,11 @@ module.exports = {
   module: {
     rules: [
       // we pass the output from babel loader to react-hot loader
+      {
+        test: /\.tsx?$/,
+        enforce: 'pre',
+        loader: 'tslint-loader'
+      },
       { 
         test: /\.tsx?$/,
         exclude: /node_modules/,
