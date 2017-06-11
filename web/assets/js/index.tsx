@@ -1,14 +1,15 @@
-import * as ReactDOM from "react-dom";
 import * as React from "react";
-import App from "./app";
-import { Provider } from 'react-redux';
-import {applyMiddleware, createStore, } from 'redux';
-import { logger } from 'redux-logger';
-import reducer from "./reducers/index";
-import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
-import {Proof} from "./components/Proof";
+import * as ReactDOM from "react-dom";
+import { Provider } from "react-redux";
+import { BrowserRouter as Router, Route } from "react-router-dom";
+import { applyMiddleware, createStore } from "redux";
+import { logger } from "redux-logger";
 
-let store = createStore(reducer, applyMiddleware(logger));
+import App from "./app";
+import { Proof } from "./components/Proof";
+import reducer from "./reducers/index";
+
+const store = createStore(reducer, applyMiddleware(logger));
 
 ReactDOM.render(
   <Provider store={store}>
@@ -19,5 +20,5 @@ ReactDOM.render(
       </div>
     </Router>
   </Provider>,
-  document.getElementById('react-app')
+  document.getElementById("react-app"),
 );

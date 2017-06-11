@@ -1,10 +1,10 @@
 import * as React from "react";
-import {Alert, AnchorButton, InputGroup, Tooltip} from "@blueprintjs/core";
-import {assign} from "lodash";
+
+import { AnchorButton, InputGroup, Tooltip } from "@blueprintjs/core";
 
 export interface Input {
-  id: number,
-  text: string,
+  id: number;
+  text: string;
 }
 export interface AddInputBoxProps {
   proofId: string;
@@ -33,34 +33,19 @@ export class AddInputBox extends React.Component<AddInputBoxProps, AddInputBoxSt
   }
 
   render() {
-    const { inputType, dataList, onDelete, onAdd, proofId, error } = this.props;
+    const { inputType } = this.props;
     const { text } = this.state;
-    let currKey = 0;
+
     return (
       <div>
         <InputGroup
-          placeholder={ "Enter " + inputType + "..." }
+          placeholder={"Enter " + inputType + "..."}
           value={text}
           onChange={this.onChange}
-          rightElement={
-            error && (
-              <Tooltip content={error}>
-                <span className="pt-icon-error pt-intent-danger" />
-              </Tooltip>
-            )
-          }
+          rightElement={this.renderError()}
         />
-        <AnchorButton className="pt-minimal" iconName="add" onClick={() => onAdd(proofId, text)} />
-        {
-          dataList.map( (item: Input) => {
-            return (
-              <div key={currKey++} className="pt-card">
-                [{currKey}] {item.text}
-                <AnchorButton className="pt-minimal" iconName="delete" onClick={() => onDelete(proofId, item.id, item.text)} />
-              </div>
-            );
-          })
-        }
+        <AnchorButton className="pt-minimal" iconName="add" onClick={this.onAdd} />
+        {this.renderData()}
       </div>
     );
   }
@@ -68,6 +53,47 @@ export class AddInputBox extends React.Component<AddInputBoxProps, AddInputBoxSt
   private onChange = (event: React.FormEvent<HTMLElement>) => {
     const text = (event.target as HTMLInputElement).value;
     this.setState({text});
-  };
+  }
+
+  private onAdd = () => {
+    const { proofId, onAdd } = this.props;
+    const { text } = this.state;
+
+    onAdd(proofId, text);
+  }
+
+  private createOnDeleteHandler = (proofId, itemId, itemText) => () => {
+    const { onDelete } = this.props;
+    onDelete(proofId, itemId, itemText);
+  }
+
+  private renderData = () => {
+    const { dataList, proofId } = this.props;
+
+    let currKey = 0;
+
+    return dataList.map((item: Input) => {
+      return (
+        <div key={currKey++} className="pt-card">
+          [{currKey}] {item.text}
+          <AnchorButton
+            className="pt-minimal"
+            iconName="delete"
+            onClick={this.createOnDeleteHandler(proofId, item.id, item.text)}
+          />
+        </div>
+      );
+    });
+  }
+
+  private renderError = () => {
+    const { error } = this.props;
+
+    return error && (
+        <Tooltip content={error}>
+          <span className="pt-icon-error pt-intent-danger" />
+        </Tooltip>
+    );
+  }
 
 }
