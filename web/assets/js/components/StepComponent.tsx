@@ -217,8 +217,8 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
 
     let currentLineNumber = 0;
 
-    dataList.map((item: StepData) => {
-      return (
+    return dataList.map((item: StepData) =>
+      (
         <div key={currentLineNumber++} className="pt-card">
           [{currentLineNumber}] {item.text}
           {this.assTag(item.isFirstStepInBox)}
@@ -230,8 +230,7 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
             onClick={this.createOnDeleteStepHandler(proofId, item)}
           />
         </div>
-      );
-    });
+      ));
   }
 
   private renderProofLines = (lines, intent, createOnDeleteHandler) =>
