@@ -1,0 +1,17 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended", "tslint-react"
+    ],
+    "jsRules": {},
+    "rules": {
+      "interface-name": [true, "never-prefix"],
+      "arrow-parens": [true, "ban-single-arg-parens"],
+      "import-spacing": true,
+      "member-access": [true, "no-public"],
+      "object-literal-shorthand": true,
+      "object-literal-sort-keys": false,
+      "no-unused-variable": true
+    },
+    "rulesDirectory": []
+}

@@ -130,7 +130,7 @@ class Z3StepBuilder(folVisitor):
             # get z3 predicate function
             predicate = self.predicate_map.get(ctx.PREPOSITION().getText())
 
-            # get z3 constants
+            # get z3 model
             z3_consts = list(map((lambda t: Const(t[0], t[1])), zip(tuple, param_type)))
 
             # add z3 params to var_map. If it's in the var_map, it's a bounded variable. If not, it's an error.
@@ -229,9 +229,15 @@ class Z3StepBuilder(folVisitor):
         lexer = folLexer(file)
         stream = CommonTokenStream(lexer)
         parser = folParser(stream)
+        errorListener = folSyntaxErrorListener()
+        parser.removeErrorListeners()
+        parser.addErrorListener(errorListener)
 
         tree = parser.step()
-        return self.visit(tree);
+        if not errorListener.isGood():
+            print("HI")
+            return None
+        return self.visit(tree)
 
 def get_args():
     parser = argparse.ArgumentParser(

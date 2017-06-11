@@ -22,6 +22,7 @@ class GivenViewSet(viewsets.ModelViewSet):
 
     @csrf_exempt
     def create(self, request):
+        print(request.data)
         serializer = GivenSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             type_query = Type.objects.filter(proofId=request.data['proofId'])

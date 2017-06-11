@@ -43,7 +43,7 @@ class StepViewSet(viewsets.ModelViewSet):
 
             if not step_valid:
                 raise Z3Exception('Syntax Error', 'text', status.HTTP_400_BAD_REQUEST)
-            elif serializer.validated_data['firstStepInBox']:
+            elif serializer.validated_data['isFirstStepInBox']:
                 # Assumption
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
@@ -67,6 +67,10 @@ class StepViewSet(viewsets.ModelViewSet):
             if proof_valid:
                 instance = serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
+
+            #print(proof_valid)
+            print(Step.proof_sat(step_builder, serializer.validated_data['text'], given_just, step_just))
+
             raise Z3Exception('Proof is not Valid', 'text', status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

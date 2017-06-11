@@ -12,3 +12,4 @@ z3test*.py
 
 QnA
 !/error/folTypeSyntaxErrorListener.py
+!/error/folSyntaxErrorListener.py

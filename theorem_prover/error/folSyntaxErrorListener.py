@@ -1,14 +1,14 @@
 from antlr4 import *
 from sys import *
 
-from folTypeLexer import folTypeLexer
-from folTypeParser import folTypeParser
+from folLexer import folLexer
+from folParser import folParser
 from antlr4.error.ErrorListener import ErrorListener
 
-class folTypeSyntaxErrorListener( ErrorListener ):
+class folSyntaxErrorListener( ErrorListener ):
 
     def __init__(self):
-        super(folTypeSyntaxErrorListener, self).__init__()
+        super(folSyntaxErrorListener, self).__init__()
         self.good = True
 
     def isGood(self):
@@ -16,7 +16,7 @@ class folTypeSyntaxErrorListener( ErrorListener ):
 
     def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
         #self.error.append("\nSYNTAX ERROR")
-        print("(" + str(line) + ":" + str(column) + ") " + str(msg))
+        #self.error.append("(" + str(line) + ":" + str(column) + ") " + str(msg))
         self.good = False
 
     def reportAmbiguity(self, recognizer, dfa, startIndex, stopIndex, exact, ambigAlts, configs):
@@ -29,12 +29,12 @@ class folTypeSyntaxErrorListener( ErrorListener ):
         pass
 
 if __name__ == "__main__":
-    errorListener = folTypeSyntaxErrorListener()
-    lexer = folTypeLexer(FileStream(argv[1]))
+    errorListener = folSyntaxErrorListener()
+    lexer = folLexer(FileStream(argv[1]))
     # Add your error listener to the lexer if required
     lexer.removeErrorListeners()
     lexer.addErrorListener(errorListener)
     stream = CommonTokenStream(lexer)
-    parser = folTypeParser(stream)
+    parser = folParser(stream)
     parser.addErrorListener(errorListener)
-    tree = parser.init()
+    tree = parser.step()
