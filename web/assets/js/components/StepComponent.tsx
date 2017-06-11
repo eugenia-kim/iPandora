@@ -4,7 +4,7 @@ import {assign} from "lodash";
 import {ENGINE_METHOD_NONE} from "constants";
 import {StepData} from "../actions/index";
 import {createImplication} from "../model/logicFormulaCreators";
-import {BoxButtonComponent} from "./BoxButtonComponent";
+import {ExistButtonComponent, ImpButtonComponent} from "./BoxButtonComponent";
 
 export interface Input {
   id: number,
@@ -109,18 +109,18 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
           })
         }
 
-        <Button
-          text="Enter Box"
-          onClick={() => onCreateBox(proofId, boxId)}
-        />
-        <Button
-          text="End Box"
-          onClick={() => {
-            const text = createImplication(firstStepInBox.text, lastStepInBox.text);
-            const step_just = [firstStepInBox.id, lastStepInBox.id];
-            onEndBox(proofId,text, step_just, boxId);
-          }}
-        />
+        {/*<Button*/}
+          {/*text="Enter Box"*/}
+          {/*onClick={() => onCreateBox(proofId, boxId)}*/}
+        {/*/>*/}
+        {/*<Button*/}
+          {/*text="End Box"*/}
+          {/*onClick={() => {*/}
+            {/*const text = createImplication(firstStepInBox.text, lastStepInBox.text);*/}
+            {/*const step_just = [firstStepInBox.id, lastStepInBox.id];*/}
+            {/*onEndBox(proofId,text, step_just, boxId);*/}
+          {/*}}*/}
+        {/*/>*/}
         <Button
           iconName="add"
           text="ADD PROOF"
@@ -161,31 +161,42 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
         }
 
 
-        <Button
-          text="Exist Elim"
-          onClick={() => onCreateBox(proofId, boxId)}
-        />
-        <Button
-          text="Finish Exist Elim"
-          onClick={() => {
-            const text = lastStepInBox.text;
-            const firstStepId = firstStepInBox.id;
-            const lastStepId = lastStepInBox.id;
-            const step_just = [this.getPrevId(firstStepId, stepIdList), firstStepId, lastStepId];
-            onEndBox(proofId, text, step_just, boxId);
-          }}
-        />
-
-        {/*<BoxButtonComponent*/}
-          {/*type="Exists E"*/}
-          {/*proofId={proofId}*/}
-          {/*text={lastStepInBox.text}*/}
-          {/*step_just={[this.getPrevId(firstStepInBox.id, stepIdList), firstStepInBox.id, lastStepInBox.id]}*/}
-          {/*boxId={boxId}*/}
-          {/*onCreateBox={onCreateBox}*/}
-          {/*onEndBox={onEndBox}*/}
+        {/*<Button*/}
+          {/*text="Exist Elim"*/}
+          {/*onClick={() => onCreateBox(proofId, boxId)}*/}
+        {/*/>*/}
+        {/*<Button*/}
+          {/*text="Finish Exist Elim"*/}
+          {/*onClick={() => {*/}
+            {/*const text = lastStepInBox.text;*/}
+            {/*const firstStepId = firstStepInBox.id;*/}
+            {/*const lastStepId = lastStepInBox.id;*/}
+            {/*const step_just = [this.getPrevId(firstStepId, stepIdList), firstStepId, lastStepId];*/}
+            {/*onEndBox(proofId, text, step_just, boxId);*/}
+          {/*}}*/}
         {/*/>*/}
 
+        <ImpButtonComponent
+          type="-> I"
+          firstStepInBox={firstStepInBox}
+          lastStepInBox={lastStepInBox}
+          proofId={proofId}
+          stepIdList={stepIdList}
+          boxId={boxId}
+          onCreateBox={onCreateBox}
+          onEndBox={onEndBox}
+        />
+
+        <ExistButtonComponent
+          type="Exist E"
+          firstStepInBox={firstStepInBox}
+          lastStepInBox={lastStepInBox}
+          proofId={proofId}
+          stepIdList={stepIdList}
+          boxId={boxId}
+          onCreateBox={onCreateBox}
+          onEndBox={onEndBox}
+        />
 
       </div>
     );
