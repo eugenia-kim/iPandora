@@ -1,4 +1,4 @@
-import * as type from "../model/type"
+import * as type from "../model/type";
 
 export interface TypeData {
   id: number;
@@ -45,14 +45,14 @@ export const setGivens = (dataList: GivenData[]) => {
   return {
     type: type.SET_GIVENS,
     payload: dataList,
-  }
+  };
 };
 
 export const setToShows = (dataList: ToShowData[]) => {
   return {
     type: type.SET_TOSHOWS,
     payload: dataList,
-  }
+  };
 };
 
 export const setSteps = (dataList: StepData[]) => {
@@ -62,37 +62,33 @@ export const setSteps = (dataList: StepData[]) => {
   };
 };
 
-
-
 export const addType = (data: TypeData) => {
   return {
     type: type.ADD_TYPE,
-    payload: data
+    payload: data,
   };
 };
 
 export const addGiven = (data: GivenData) => {
   return {
     type: type.ADD_GIVEN,
-    payload: data
+    payload: data,
   };
 };
 
 export const addToShow = (data: ToShowData) => {
   return {
     type: type.ADD_TOSHOW,
-    payload: data
+    payload: data,
   };
 };
 
 export const addStep = (data: StepData) => {
   return {
     type: type.ADD_STEP,
-    payload: data
+    payload: data,
   };
 };
-
-
 
 export const errGiven = (error: string) => {
   return {
@@ -121,8 +117,6 @@ export const errStep = (error: string) => {
     payload: error,
   };
 };
-
-
 
 export const deleteType = (data: TypeData) => {
   return {

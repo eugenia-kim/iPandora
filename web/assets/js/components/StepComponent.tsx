@@ -1,30 +1,35 @@
+import { assign } from "lodash";
 import * as React from "react";
-import {Alert, AnchorButton, Button, Checkbox, InputGroup, Intent, NumericInput, Tag, Tooltip} from "@blueprintjs/core";
-import {assign} from "lodash";
-import {ENGINE_METHOD_NONE} from "constants";
-import {StepData} from "../actions/index";
-import {createImplication} from "../model/logicFormulaCreators";
-import {ExistButtonComponent, ImpButtonComponent} from "./BoxButtonComponent";
+
+import { AnchorButton, Button, InputGroup, Intent, NumericInput, Tag, Tooltip } from "@blueprintjs/core";
+
+import { StepData } from "../actions/index";
+import { ExistButtonComponent, ImpButtonComponent } from "./BoxButtonComponent";
 
 export interface Input {
-  id: number,
-  text: string,
-  boxId: string,
-  isFirstStepInBox: boolean,
+  id: number;
+  text: string;
+  boxId: string;
+  isFirstStepInBox: boolean;
 }
 export interface StepComponentProps {
-  proofId: string;
-  boxId : string; // current box
-  isFirstStepInBox: boolean; // current box
+  boxId: string; // current box
   firstStepInBox: StepData;
+  proofId: string;
+  isFirstStepInBox: boolean; // current box
   lastStepInBox: StepData;
   inputType: string;
   givenIdList: number[]; // linenumber -> id
   stepIdList: number[];
-  onAdd: (proofId: string, text: string, given_just: number[], step_just: number[], boxId: string, isFirstStepInBox: boolean) => void;
+  onAdd: (proofId: string,
+          text: string,
+          givenJust: number[],
+          stepJust: number[],
+          boxId: string,
+          isFirstStepInBox: boolean) => void;
   onDelete: (proofId: string, id: number, text: string, boxId: string, isFirstStepInBox: boolean) => void;
   onCreateBox: (proofId: string, boxId: string) => void;
-  onEndBox: (proofId: string, text: string, step_just: number[], boxId: string) => void;
+  onEndBox: (proofId: string, text: string, stepJust: number[], boxId: string) => void;
   dataList: StepData[];
   error: string;
   getData: (proofId: string) => void;
@@ -40,9 +45,9 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
   constructor() {
     super();
     this.state = {
-      text: "",
       givenLines: [],
       stepLines: [],
+      text: "",
     };
   }
 
@@ -51,8 +56,24 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
   }
 
   render() {
-    const { inputType, dataList, onDelete, onAdd, onCreateBox, onEndBox, boxId, isFirstStepInBox, firstStepInBox, lastStepInBox, proofId, error, givenIdList, stepIdList, } = this.props;
-    const { text, givenLines, stepLines, } = this.state;
+    // TODO: We most likely want to make render a smaller method which requires less variables
+    const {
+      inputType,
+      dataList,
+      onDelete,
+      onAdd,
+      onCreateBox,
+      onEndBox,
+      boxId,
+      isFirstStepInBox,
+      firstStepInBox,
+      lastStepInBox,
+      proofId,
+      error,
+      givenIdList,
+      stepIdList,
+    } = this.props;
+    const { text, givenLines, stepLines } = this.state;
     let stepLine;
     let givenLine;
     let currKey = 0;
@@ -127,9 +148,9 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
           intent={Intent.PRIMARY}
           onClick={() => {
             this.setState( assign({}, this.state, { givenLine: null, stepLine: null }) );
-            const given_just = this.getIds(givenLines, givenIdList);
-            const step_just = this.getIds(stepLines, stepIdList);
-            onAdd(proofId, text, given_just, step_just, boxId, isFirstStepInBox);
+            const givenJust = this.getIds(givenLines, givenIdList);
+            const stepJust = this.getIds(stepLines, stepIdList);
+            onAdd(proofId, text, givenJust, stepJust, boxId, isFirstStepInBox);
           }}
         />
         {
@@ -154,12 +175,15 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
                     );
                   })
                 }
-                <AnchorButton className="pt-minimal" iconName="delete" onClick={() => onDelete(proofId, item.id, item.text, item.boxId, item.isFirstStepInBox)} />
+                <AnchorButton
+                  className="pt-minimal"
+                  iconName="delete"
+                  onClick={() => onDelete(proofId, item.id, item.text, item.boxId, item.isFirstStepInBox)}
+                />
               </div>
             );
           })
         }
-
 
         {/*<Button*/}
           {/*text="Exist Elim"*/}
@@ -202,39 +226,39 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
     );
   }
 
-  private getPrevId = (id:number, ids: number[]) => {
+  private getPrevId = (id: number, ids: number[]) => {
     return ids[ids.indexOf(id) - 1];
-  };
+  }
 
   private getIds = (lines: number[], ids: number[]) => {
-    return lines.map(l => ids[l - 1])
-  };
+    return lines.map(l => ids[l - 1]);
+  }
 
-  private onAddGivenLine = (line : number) => {
+  private onAddGivenLine = (line: number) => {
     this.setState(assign({}, this.state, { givenLines: [...this.state.givenLines, line]}));
-  };
+  }
 
   private onAddStepLine = (line: number) => {
     this.setState(assign({}, this.state, { stepLines: [...this.state.stepLines, line]}));
-  };
+  }
 
   private deleteGivenTag = (line: number) => {
-    this.setState(assign({}, this.state, { givenLines: this.state.givenLines.filter((item) => item !== line) }));
-  };
+    this.setState(assign({}, this.state, { givenLines: this.state.givenLines.filter(item => item !== line) }));
+  }
 
   private deleteStepTag = (line: number) => {
-    this.setState(assign({}, this.state, { stepLines: this.state.stepLines.filter((item) => item !== line )}));
-  };
+    this.setState(assign({}, this.state, { stepLines: this.state.stepLines.filter(item => item !== line )}));
+  }
 
   private onChange = (event: React.FormEvent<HTMLInputElement>) => {
     const text = (event.target as HTMLInputElement).value;
     this.setState(assign({}, this.state, { text }));
-  };
+  }
 
   private handleAssume = (event: React.FormEvent<HTMLInputElement>) => {
     const checked = (event.target as HTMLInputElement).value;
     this.setState(assign({}, this.state, { assume: checked }));
-  };
+  }
 
   private  assTag = (flag: boolean) => {
     if (flag) {
@@ -242,5 +266,5 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
         <Tag intent={Intent.DANGER} > ass </Tag>
       );
     }
-  };
+  }
 }

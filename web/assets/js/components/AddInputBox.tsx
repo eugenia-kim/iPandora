@@ -1,10 +1,10 @@
 import * as React from "react";
-import {Alert, AnchorButton, InputGroup, Tooltip} from "@blueprintjs/core";
-import {assign} from "lodash";
+
+import { AnchorButton, InputGroup, Tooltip } from "@blueprintjs/core";
 
 export interface Input {
-  id: number,
-  text: string,
+  id: number;
+  text: string;
 }
 export interface AddInputBoxProps {
   proofId: string;
@@ -56,7 +56,11 @@ export class AddInputBox extends React.Component<AddInputBoxProps, AddInputBoxSt
             return (
               <div key={currKey++} className="pt-card">
                 [{currKey}] {item.text}
-                <AnchorButton className="pt-minimal" iconName="delete" onClick={() => onDelete(proofId, item.id, item.text)} />
+                <AnchorButton
+                  className="pt-minimal"
+                  iconName="delete"
+                  onClick={() => onDelete(proofId, item.id, item.text)}
+                />
               </div>
             );
           })
@@ -68,6 +72,6 @@ export class AddInputBox extends React.Component<AddInputBoxProps, AddInputBoxSt
   private onChange = (event: React.FormEvent<HTMLElement>) => {
     const text = (event.target as HTMLInputElement).value;
     this.setState({text});
-  };
+  }
 
 }

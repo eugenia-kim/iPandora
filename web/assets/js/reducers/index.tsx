@@ -1,7 +1,8 @@
-import * as actionType from "../model/type"
-import { assign } from "lodash"
-import {combineReducers} from "redux";
-import {BoxData, GivenData, StepData, ToShowData, TypeData} from "../actions/index";
+import { assign } from "lodash";
+import { combineReducers } from "redux";
+
+import { BoxData, GivenData, StepData, ToShowData, TypeData } from "../actions/index";
+import * as actionType from "../model/type";
 
 export interface AppState {
   given: InputState<GivenData>;
@@ -12,11 +13,11 @@ export interface AppState {
 }
 
 export interface BoxState {
-  proofId : string;
   boxStack: string[];
   firstStepMap: { [boxId: string]: StepData };
-  lastStep: StepData;
   isEmpty: boolean;
+  lastStep: StepData;
+  proofId: string;
 }
 
 export interface InputState<T> {
@@ -35,11 +36,11 @@ const initInputState  = {
 };
 
 const initBoxState = {
-  proofId: null,
   boxStack : [],
   firstStepMap: {},
-  lastStep : null,
   isEmpty : false,
+  lastStep : null,
+  proofId: null,
 };
 
 export function givenReducer(state: InputState<GivenData> = initInputState,
@@ -54,12 +55,12 @@ export function givenReducer(state: InputState<GivenData> = initInputState,
     case actionType.ADD_GIVEN:
       const givenList = state.data;
       return assign({}, state, {
-        data: [...givenList, action.payload]
+        data: [...givenList, action.payload],
       });
 
     case actionType.ERR_GIVEN:
       return assign({}, state, {
-        error: action.payload
+        error: action.payload,
       });
 
     case actionType.DELETE_GIVEN:
@@ -86,12 +87,12 @@ export function typeReducer(state: InputState<TypeData> = initInputState,
       const typeList = state.data;
       return assign({}, state, {
         data: [...typeList, action.payload],
-        error: ""
+        error: "",
       });
 
     case actionType.ERR_TYPE:
       return assign({}, state, {
-        error: action.payload
+        error: action.payload,
       });
 
     case actionType.DELETE_TYPE:
@@ -116,12 +117,12 @@ export function toShowReducer(state: InputState<ToShowData> = initInputState,
     case actionType.ADD_TOSHOW:
       const toShowList = state.data;
       return assign({}, state, {
-        data: [...toShowList, action.payload]
+        data: [...toShowList, action.payload],
       });
 
     case actionType.ERR_TOSHOW:
       return assign({}, state, {
-        error: action.payload
+        error: action.payload,
       });
 
     case actionType.DELETE_TOSHOW:
@@ -146,12 +147,12 @@ export function stepReducer(state: InputState<StepData> = initInputState,
     case actionType.ADD_STEP:
       const stepList = state.data;
       return assign({}, state, {
-        data: [...stepList, action.payload]
+        data: [...stepList, action.payload],
       });
 
     case actionType.ERR_STEP:
       return assign({}, state, {
-        error: action.payload
+        error: action.payload,
       });
 
     case actionType.DELETE_STEP:
@@ -169,9 +170,9 @@ export function boxReducer(state: BoxState = initBoxState,
   switch (action.type) {
     case actionType.CREATE_BOX:
       return assign({}, state, {
-        proofId: action.payload.proofId,
         boxStack: [...state.boxStack, action.payload.id],
         isEmpty: true,
+        proofId: action.payload.proofId,
       });
 
     case actionType.ASSUME_BOX:
@@ -180,26 +181,26 @@ export function boxReducer(state: BoxState = initBoxState,
       const step = typedAction.payload;
 
       return assign({}, state, {
-        proofId: typedAction.payload.proofId,
-        isEmpty: false,
-        lastStep: typedAction.payload,
         firstStepMap: {
           ...state.firstStepMap,
           [boxId]: step,
-          },
+        },
+        isEmpty: false,
+        lastStep: typedAction.payload,
+        proofId: typedAction.payload.proofId,
       });
 
     case actionType.UPDATE_BOX:
       return assign({}, state, {
-        lastStep: (action as Action<StepData>).payload
+        lastStep: (action as Action<StepData>).payload,
       });
 
     case actionType.END_BOX:
       const stack = state.boxStack.slice();
       stack.pop();
       return assign({}, state, {
-        isEmpty: false,
         boxStack: stack,
+        isEmpty: false,
       });
 
     default:
@@ -208,10 +209,9 @@ export function boxReducer(state: BoxState = initBoxState,
 }
 
 export default combineReducers({
-  given: givenReducer,
-  type: typeReducer,
-  toShow: toShowReducer,
-  step: stepReducer,
   box: boxReducer,
+  given: givenReducer,
+  step: stepReducer,
+  toShow: toShowReducer,
+  type: typeReducer,
 });
-

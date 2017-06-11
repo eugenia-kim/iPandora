@@ -4,6 +4,13 @@
         "tslint:recommended"
     ],
     "jsRules": {},
-    "rules": {},
+    "rules": {
+      "interface-name": [true, "never-prefix"],
+      "arrow-parens": [true, "ban-single-arg-parens"],
+      "import-spacing": true,
+      "member-access": [true, "no-public"],
+      "object-literal-shorthand": true,
+      "object-literal-sort-keys": false
+    },
     "rulesDirectory": []
 }
