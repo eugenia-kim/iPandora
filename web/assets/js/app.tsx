@@ -11,11 +11,14 @@ export default class App extends React.Component<RouteComponentProps<void>, {}> 
       <div>
         <Button
           text="Begin"
-          onClick={() => post("http://localhost:8000/api/begin_proof/", (error, response, _body) => {
-            this.props.history.push(new URL(response.url).pathname);
-          })}
+          onClick={this.beginProof}
         />
       </div>
     );
   }
+
+  private beginProof = () =>
+    post("http://localhost:8000/api/begin_proof/", (error, response) => {
+      this.props.history.push(new URL(response.url).pathname);
+    })
 }
