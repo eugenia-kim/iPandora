@@ -1,4 +1,5 @@
 import * as type from "../model/type";
+import { BoxState } from "../reducers/index";
 
 export interface InitializerData { // Type || Given || ToShow
   id: number;
@@ -22,6 +23,13 @@ export interface BoxData {
   proofId: string;
   parentId: string;
 }
+
+export const setBoxes = (boxState: BoxState) => {
+  return {
+    type: type.SET_BOXES,
+    payload: boxState,
+  };
+};
 
 export const setTypes = (dataList: InitializerData[]) => {
   return {

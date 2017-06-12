@@ -166,13 +166,17 @@ export function stepReducer(state: InputState<StepData> = { data: Array<StepData
 }
 
 export function boxReducer(state: BoxState = initBoxState,
-                           action: Action<BoxData> | Action<StepData>) {
+                           action: Action<BoxData> | Action<StepData> | Action<BoxState> ) {
   switch (action.type) {
+
+    case actionType.SET_BOXES:
+      return assign({}, state, (action as Action<BoxState>).payload);
+
     case actionType.CREATE_BOX:
       return assign({}, state, {
-        boxStack: [...state.boxStack, action.payload.id],
+        boxStack: [...state.boxStack, (action as Action<BoxData>).payload.id],
         isEmpty: true,
-        proofId: action.payload.proofId,
+        proofId: (action as Action<BoxData>).payload.proofId,
       });
 
     case actionType.ASSUME_BOX:

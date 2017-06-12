@@ -216,11 +216,17 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
     const { dataList, givenIdList, proofId, stepIdList } = this.props;
 
     let currentLineNumber = 0;
-
-    return dataList.map((item: StepData) =>
-      (
+    return dataList.map((item: StepData) => {
+      const classes = classNames({
+        indented1: item.depth === 1,
+        indented2: item.depth === 2,
+        indented3: item.depth === 3,
+        indented4: item.depth === 4,
+        indented5: item.depth === 5,
+      });
+      return (
         <div key={currentLineNumber++} className="pt-card">
-          <div className={classNames({ indented1: item.depth === 1, indented2: item.depth === 2, indented3: item.depth === 3, indented4: item.depth === 4, indented5: item.depth === 5 })}>
+          <div className={classes}>
             [{currentLineNumber}] {item.text}
             {this.assTag(item.isFirstStepInBox)}
             {this.renderJustificationList(item.given_just, givenIdList, Intent.SUCCESS)}
@@ -232,7 +238,8 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
             />
           </div>
         </div>
-      ));
+      );
+    });
   }
 
   private renderProofLines = (lines: number[],
