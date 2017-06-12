@@ -2,7 +2,7 @@ import * as classNames from "classnames";
 import { assign } from "lodash";
 import * as React from "react";
 
-import { AnchorButton, Button, InputGroup, Intent, NumericInput, Tag, Tooltip } from "@blueprintjs/core";
+import { AnchorButton, Button, InputGroup, Intent, NumericInput, Position, Tag, Tooltip } from "@blueprintjs/core";
 
 import { StepData } from "../actions/index";
 import { createImplication } from "../model/logicFormulaCreators";
@@ -80,21 +80,25 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
           rightElement={this.renderError()}
         />
 
-        <NumericInput
-          placeholder="Given Line Numbers"
-          value={currentGivenLine}
-          intent={Intent.SUCCESS}
-          onValueChange={this.onUpdateCurrentGivenLine}
-        />
-        <AnchorButton className="pt-minimal" iconName="add" onClick={this.onAddGivenJustification} />
+        <div className="justification-group">
+          <NumericInput
+            placeholder="Given Line Numbers"
+            value={currentGivenLine}
+            intent={Intent.SUCCESS}
+            onValueChange={this.onUpdateCurrentGivenLine}
+          />
+          <AnchorButton className="pt-minimal" iconName="add" onClick={this.onAddGivenJustification} />
+        </div>
         {this.renderProofLines(givenLines, Intent.SUCCESS, this.createOnDeleteGivenJustificationHandler)}
-        <NumericInput
-          placeholder="Step Line Numbers"
-          value={currentStepLine}
-          intent={Intent.WARNING}
-          onValueChange={this.onUpdateCurrentStepLine}
-        />
-        <AnchorButton className="pt-minimal" iconName="add" onClick={this.onAddStepJustification} />
+        <div className="justification-group">
+          <NumericInput
+            placeholder="Step Line Numbers"
+            value={currentStepLine}
+            intent={Intent.WARNING}
+            onValueChange={this.onUpdateCurrentStepLine}
+          />
+          <AnchorButton className="pt-minimal" iconName="add" onClick={this.onAddStepJustification} />
+        </div>
         {this.renderProofLines(stepLines, Intent.WARNING, this.createOnDeleteStepJustificationHandler)}
 
         <Button
@@ -206,8 +210,11 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
     const { error } = this.props;
 
     return error && (
-      <Tooltip content={error}>
-        <span className="pt-icon-error pt-intent-danger"/>
+      <Tooltip
+        content={error}
+        position={Position.BOTTOM_RIGHT}
+      >
+        <span className="pt-icon pt-icon-error pt-intent-danger"/>
       </Tooltip>
     );
   }

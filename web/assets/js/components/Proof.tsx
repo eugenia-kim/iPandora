@@ -13,13 +13,15 @@ export interface ProofUrlParams {
 export class Proof extends React.Component<RouteComponentProps<ProofUrlParams>, {}> {
   render() {
     return (
-      <div>
-        SMART COOKIE: {this.props.match.params.proofId}
-        <TypeInputBox inputType="Type" proofId={this.props.match.params.proofId} />
-        <GivenInputBox inputType="Given" proofId={this.props.match.params.proofId} />
-        <ToShowInputBox inputType="ToShow" proofId={this.props.match.params.proofId} />
-        PROOF
-        <StepInputBox inputType="Step" proofId={this.props.match.params.proofId} />
+      <div className="proof">
+        <div className="proof-inputs">
+          <TypeInputBox inputType="Type" proofId={this.props.match.params.proofId} />
+          <GivenInputBox inputType="Given" proofId={this.props.match.params.proofId} />
+          <ToShowInputBox inputType="ToShow" proofId={this.props.match.params.proofId} />
+        </div>
+        <div className="proof-body">
+          <StepInputBox inputType="Step" proofId={this.props.match.params.proofId} />
+        </div>
       </div>
     );
   }
