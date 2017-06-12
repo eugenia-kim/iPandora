@@ -44,13 +44,13 @@ module.exports = {
         ],
       },
       {
-        test: /\.scss$/,
+        test: /\.less$/,
         use: [{
-            loader: "style-loader" // creates style nodes from JS strings
+          loader: "style-loader" // creates style nodes from JS strings
         }, {
-            loader: "css-loader" // translates CSS into CommonJS
+          loader: "css-loader" // translates CSS into CommonJS
         }, {
-            loader: "sass-loader" // compiles Sass to CSS
+          loader: "less-loader" // compiles Less to CSS
         }]
       },
       {
@@ -80,7 +80,7 @@ module.exports = {
     modules: [
       'node_modules'
     ],
-    extensions: ['.js', '.tsx', ".ts", ".scss"]
+    extensions: ['.js', '.tsx', ".ts", ".less"]
   },
   node: {
     console: true,

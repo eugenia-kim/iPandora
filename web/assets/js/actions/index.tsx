@@ -1,18 +1,7 @@
 import * as type from "../model/type";
+import { BoxState } from "../reducers/index";
 
-export interface TypeData {
-  id: number;
-  proofId: string;
-  text: string;
-}
-
-export interface GivenData {
-  id: number;
-  proofId: string;
-  text: string;
-}
-
-export interface ToShowData {
+export interface InitializerData { // Type || Given || ToShow
   id: number;
   proofId: string;
   text: string;
@@ -20,6 +9,7 @@ export interface ToShowData {
 
 export interface StepData {
   id: number;
+  depth: number;
   proofId: string;
   text: string;
   given_just: number[];
@@ -34,21 +24,28 @@ export interface BoxData {
   parentId: string;
 }
 
-export const setTypes = (dataList: TypeData[]) => {
+export const setBoxes = (boxState: BoxState) => {
+  return {
+    type: type.SET_BOXES,
+    payload: boxState,
+  };
+};
+
+export const setTypes = (dataList: InitializerData[]) => {
   return {
     type: type.SET_TYPES,
     payload: dataList,
   };
 };
 
-export const setGivens = (dataList: GivenData[]) => {
+export const setGivens = (dataList: InitializerData[]) => {
   return {
     type: type.SET_GIVENS,
     payload: dataList,
   };
 };
 
-export const setToShows = (dataList: ToShowData[]) => {
+export const setToShows = (dataList: InitializerData[]) => {
   return {
     type: type.SET_TOSHOWS,
     payload: dataList,
@@ -62,21 +59,21 @@ export const setSteps = (dataList: StepData[]) => {
   };
 };
 
-export const addType = (data: TypeData) => {
+export const addType = (data: InitializerData) => {
   return {
     type: type.ADD_TYPE,
     payload: data,
   };
 };
 
-export const addGiven = (data: GivenData) => {
+export const addGiven = (data: InitializerData) => {
   return {
     type: type.ADD_GIVEN,
     payload: data,
   };
 };
 
-export const addToShow = (data: ToShowData) => {
+export const addToShow = (data: InitializerData) => {
   return {
     type: type.ADD_TOSHOW,
     payload: data,
@@ -118,31 +115,31 @@ export const errStep = (error: string) => {
   };
 };
 
-export const deleteType = (data: TypeData) => {
+export const deleteType = (data: InitializerData) => {
   return {
     type: type.DELETE_TYPE,
     payload: data,
   };
 };
 
-export const deleteGiven = (data: GivenData) => {
+export const deleteGiven = (data: InitializerData) => {
   return {
     type: type.DELETE_GIVEN,
     payload: data,
   };
 };
 
-export const deleteToShow = (data: ToShowData) => {
+export const deleteToShow = (data: InitializerData) => {
   return {
     type: type.DELETE_TOSHOW,
     payload: data,
   };
 };
 
-export const deleteStep = (data: StepData) => {
+export const deleteStep = (id: number) => {
   return {
     type: type.DELETE_STEP,
-    payload: data,
+    payload: id,
   };
 };
 

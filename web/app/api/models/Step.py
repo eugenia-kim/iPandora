@@ -16,6 +16,7 @@ class Step(models.Model):
     given_just = models.ManyToManyField(Given, blank=True, null=True)
     step_just = models.ManyToManyField("self", blank=True, null=True)
     boxId = models.ForeignKey(Box, blank=True, null=True)
+    depth = models.IntegerField(default=0)
     isFirstStepInBox = models.BooleanField(default=False)
 
     @classmethod
@@ -37,4 +38,4 @@ class Step(models.Model):
 class StepSerializer(serializers.ModelSerializer):
     class Meta:
         model = Step
-        fields = ('id', 'proofId', 'text', 'given_just', 'step_just', 'boxId', 'isFirstStepInBox')
+        fields = ('id', 'proofId', 'text', 'given_just', 'step_just', 'boxId', 'depth', 'isFirstStepInBox')

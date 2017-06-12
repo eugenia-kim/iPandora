@@ -6,7 +6,7 @@ import { addGiven, deleteGiven, errGiven, setGivens } from "../actions";
 import { AddInputBox } from "../components/AddInputBox";
 import { Action, AppState } from "../reducers/index";
 
-const mapStateToProps = (state: AppState, ownProps) => {
+const mapStateToProps = (state: AppState, ownProps: any) => {
   return {
     dataList: state.given.data.map(d => {
       return {id: d.id, text: d.text};

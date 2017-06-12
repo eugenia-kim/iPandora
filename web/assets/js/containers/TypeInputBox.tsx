@@ -6,7 +6,7 @@ import { addType, deleteType, errType, setTypes } from "../actions/index";
 import { AddInputBox } from "../components/AddInputBox";
 import { Action, AppState } from "../reducers/index";
 
-const mapStateToProps = (state: AppState, ownProps) => {
+const mapStateToProps = (state: AppState, ownProps: any) => {
   return {
     dataList: state.type.data.map(d => {
       return {id: d.id, text: d.text};

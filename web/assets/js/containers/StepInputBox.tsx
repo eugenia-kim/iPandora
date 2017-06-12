@@ -1,4 +1,4 @@
-import { assign, last } from "lodash";
+import { assign, last, take } from "lodash";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { del, get, post } from "request";
@@ -10,17 +10,46 @@ import {
   deleteStep,
   endBox,
   errStep,
+  setBoxes,
   setSteps,
+  StepData,
   updateBox,
 } from "../actions/index";
 import { StepComponent } from "../components/StepComponent";
 import { Action, AppState } from "../reducers/index";
 
-const mapStateToProps = (state: AppState, ownProps) => {
+const getBoxes = (steps: StepData[]) => {
+  const boxesStack = Array<string>();
+  const firstStepMap: { [boxId: string]: StepData } = {};
+
+  let lastStep: StepData;
+  let lastStepDepth = 0;
+
+  steps.forEach(step => {
+    boxesStack[step.depth] = step.boxId;
+    lastStepDepth = step.depth;
+
+    lastStep = step;
+
+    if (step.isFirstStepInBox) {
+      firstStepMap[step.boxId] = step;
+    }
+  });
+
+  return {
+    boxStack: take(boxesStack, lastStepDepth),
+    firstStepMap,
+    isEmpty: false,
+    lastStep,
+  };
+};
+
+const mapStateToProps = (state: AppState, ownProps: any) => {
   const boxId = last(state.box.boxStack);
 
   return {
     boxId,
+    depth: state.box.boxStack.length,
     dataList: state.step.data,
     error: state.step.error,
     firstStepInBox: state.box.firstStepMap[boxId],
@@ -38,11 +67,13 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<string>>) => {
       get({json: true, url: "http://localhost:8000/api/step/", qs: { proofId }},
         (error, response, body) => {
           dispatch(setSteps(body));
+          dispatch(setBoxes(assign(getBoxes(body), { proofId })));
         },
       );
     },
 
     onAdd: (proofId: string,
+            depth: number,
             text: string,
             givenJust: number[],
             stepJust: number[],
@@ -52,7 +83,7 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<string>>) => {
       if (isFirstStepInBox) {
         post(
           {
-            form: { proofId, text, boxId, isFirstStepInBox },
+            form: { proofId, depth, text, boxId, isFirstStepInBox },
             json: true,
             url: "http://localhost:8000/api/step/",
           },
@@ -61,7 +92,7 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<string>>) => {
               // TODO: if not validated with Z3 grammar
               dispatch(errStep(body.text));
             } else {
-              const stepData = assign({}, body, { given_just: [], step_just: []});
+              const stepData = assign({}, body, { depth, given_just: [], step_just: []});
               dispatch(addStep(stepData));
               dispatch(assumeBox(stepData));
             }
@@ -71,7 +102,7 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<string>>) => {
       } else {
         post(
           {
-            form: { proofId, text, givenJust, stepJust, boxId, isFirstStepInBox },
+            form: { proofId, depth, text, givenJust, stepJust, boxId, isFirstStepInBox },
             json: true,
             qsStringifyOptions: { arrayFormat: "repeat" },
             url: "http://localhost:8000/api/step/",
@@ -104,16 +135,22 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<string>>) => {
           url: "http://localhost:8000/api/step/" + id + "/",
         },
         () => {
-          dispatch(deleteStep({proofId, id, text, step_just: [], given_just: [], isFirstStepInBox, boxId}));
+          dispatch(deleteStep(id));
           // TODO if isFirstStepInBox, then make box isEmpty true
         },
       );
     },
 
-    onEndBox: (proofId: string, text: string, stepJust: number[], boxId: string) => {
+    onEndBox: (proofId: string, depth: number, text: string, stepJust: number[], boxId: string) => {
       post(
         {
-          form: { proofId, text, stepJust, boxId },
+          form: {
+            proofId,
+            depth: depth - 1,
+            text,
+            stepJust,
+            boxId,
+          },
           json: true,
           qsStringifyOptions: {arrayFormat: "repeat"},
           url: "http://localhost:8000/api/step/",
@@ -122,9 +159,10 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<string>>) => {
           if (response.statusCode === 400) {
             dispatch(errStep(body.text));
           } else {
-            dispatch(endBox(body));
-            dispatch(addStep(body));
-            dispatch(updateBox(body));
+            const stepData = assign({}, body, { depth: depth - 1 });
+            dispatch(endBox(stepData));
+            dispatch(addStep(stepData));
+            dispatch(updateBox(stepData));
           }
         },
       );

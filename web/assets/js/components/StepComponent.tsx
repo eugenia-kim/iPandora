@@ -1,20 +1,16 @@
+import * as classNames from "classnames";
 import { assign } from "lodash";
 import * as React from "react";
 
-import { AnchorButton, Button, InputGroup, Intent, NumericInput, Tag, Tooltip } from "@blueprintjs/core";
+import { AnchorButton, Button, InputGroup, Intent, NumericInput, Position, Tag, Tooltip } from "@blueprintjs/core";
 
 import { StepData } from "../actions/index";
 import { createImplication } from "../model/logicFormulaCreators";
 import { BoxButtonComponent } from "./BoxButtonComponent";
 
-export interface Input {
-  id: number;
-  text: string;
-  boxId: string;
-  isFirstStepInBox: boolean;
-}
 export interface StepComponentProps {
   boxId: string; // current box
+  depth: number;
   firstStepInBox: StepData;
   proofId: string;
   isFirstStepInBox: boolean; // current box
@@ -23,6 +19,7 @@ export interface StepComponentProps {
   givenIdList: number[]; // linenumber -> id
   stepIdList: number[];
   onAdd: (proofId: string,
+          depth: number,
           text: string,
           givenJust: number[],
           stepJust: number[],
@@ -30,7 +27,7 @@ export interface StepComponentProps {
           isFirstStepInBox: boolean) => void;
   onDelete: (proofId: string, id: number, text: string, boxId: string, isFirstStepInBox: boolean) => void;
   onCreateBox: (proofId: string, boxId: string) => void;
-  onEndBox: (proofId: string, text: string, stepJust: number[], boxId: string) => void;
+  onEndBox: (proofId: string, depth: number, text: string, stepJust: number[], boxId: string) => void;
   dataList: StepData[];
   error: string;
   getData: (proofId: string) => void;
@@ -66,6 +63,7 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
       onCreateBox,
       onEndBox,
       boxId,
+      depth,
       firstStepInBox,
       lastStepInBox,
       proofId,
@@ -82,21 +80,25 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
           rightElement={this.renderError()}
         />
 
-        <NumericInput
-          placeholder="Given Line Numbers"
-          value={currentGivenLine}
-          intent={Intent.SUCCESS}
-          onValueChange={this.onUpdateCurrentGivenLine}
-        />
-        <AnchorButton className="pt-minimal" iconName="add" onClick={this.onAddGivenJustification} />
+        <div className="justification-group">
+          <NumericInput
+            placeholder="Given Line Numbers"
+            value={currentGivenLine}
+            intent={Intent.SUCCESS}
+            onValueChange={this.onUpdateCurrentGivenLine}
+          />
+          <AnchorButton className="pt-minimal" iconName="add" onClick={this.onAddGivenJustification} />
+        </div>
         {this.renderProofLines(givenLines, Intent.SUCCESS, this.createOnDeleteGivenJustificationHandler)}
-        <NumericInput
-          placeholder="Step Line Numbers"
-          value={currentStepLine}
-          intent={Intent.WARNING}
-          onValueChange={this.onUpdateCurrentStepLine}
-        />
-        <AnchorButton className="pt-minimal" iconName="add" onClick={this.onAddStepJustification} />
+        <div className="justification-group">
+          <NumericInput
+            placeholder="Step Line Numbers"
+            value={currentStepLine}
+            intent={Intent.WARNING}
+            onValueChange={this.onUpdateCurrentStepLine}
+          />
+          <AnchorButton className="pt-minimal" iconName="add" onClick={this.onAddStepJustification} />
+        </div>
         {this.renderProofLines(stepLines, Intent.WARNING, this.createOnDeleteStepJustificationHandler)}
 
         <Button
@@ -114,6 +116,7 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
           proofId={proofId}
           stepIdList={stepIdList}
           boxId={boxId}
+          depth={depth}
           onCreateBox={onCreateBox}
           onEndBox={onEndBox}
           getText={this.getImpliesText}
@@ -127,6 +130,7 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
           proofId={proofId}
           stepIdList={stepIdList}
           boxId={boxId}
+          depth={depth}
           onCreateBox={onCreateBox}
           onEndBox={onEndBox}
           getText={this.getExistsText}
@@ -193,21 +197,24 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
   }
 
   private onAddStep = () => {
-    const { boxId, proofId, givenIdList, onAdd, stepIdList, isFirstStepInBox } = this.props;
+    const { depth, boxId, proofId, givenIdList, onAdd, stepIdList, isFirstStepInBox } = this.props;
     const { givenLines, stepLines, text } = this.state;
 
     this.setState( assign({}, this.state, { givenLines: [], stepLines: [] }) );
     const givenJust = this.getIds(givenLines, givenIdList);
     const stepJust = this.getIds(stepLines, stepIdList);
-    onAdd(proofId, text, givenJust, stepJust, boxId, isFirstStepInBox);
+    onAdd(proofId, depth, text, givenJust, stepJust, boxId, isFirstStepInBox);
   }
 
   private renderError = () => {
     const { error } = this.props;
 
     return error && (
-      <Tooltip content={error}>
-        <span className="pt-icon-error pt-intent-danger"/>
+      <Tooltip
+        content={error}
+        position={Position.BOTTOM_RIGHT}
+      >
+        <span className="pt-icon pt-icon-error pt-intent-danger"/>
       </Tooltip>
     );
   }
@@ -216,33 +223,44 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
     const { dataList, givenIdList, proofId, stepIdList } = this.props;
 
     let currentLineNumber = 0;
-
-    return dataList.map((item: StepData) =>
-      (
+    return dataList.map((item: StepData) => {
+      const classes = classNames({
+        indented1: item.depth === 1,
+        indented2: item.depth === 2,
+        indented3: item.depth === 3,
+        indented4: item.depth === 4,
+        indented5: item.depth === 5,
+      });
+      return (
         <div key={currentLineNumber++} className="pt-card">
-          [{currentLineNumber}] {item.text}
-          {this.assTag(item.isFirstStepInBox)}
-          {this.renderJustificationList(item.given_just, givenIdList, Intent.SUCCESS)}
-          {this.renderJustificationList(item.step_just, stepIdList, Intent.WARNING)}
-          <AnchorButton
-            className="pt-minimal"
-            iconName="delete"
-            onClick={this.createOnDeleteStepHandler(proofId, item)}
-          />
+          <div className={classes}>
+            [{currentLineNumber}] {item.text}
+            {this.assTag(item.isFirstStepInBox)}
+            {this.renderJustificationList(item.given_just, givenIdList, Intent.SUCCESS)}
+            {this.renderJustificationList(item.step_just, stepIdList, Intent.WARNING)}
+            <AnchorButton
+              className="pt-minimal"
+              iconName="delete"
+              onClick={this.createOnDeleteStepHandler(proofId, item)}
+            />
+          </div>
         </div>
-      ));
+      );
+    });
   }
 
-  private renderProofLines = (lines, intent, createOnDeleteHandler) =>
+  private renderProofLines = (lines: number[],
+                              intent: Intent,
+                              createOnDeleteHandler: (line: number) => (() => void)) =>
     lines.map(line => (<Tag key={line} intent={intent} onRemove={createOnDeleteHandler(line)}>{line}</Tag>))
 
-  private renderJustificationList = (list, idList, intent) => {
+  private renderJustificationList = (list: number[], idList: number[], intent: Intent) => {
     return list.map((n: number) => (
       <Tag key={n} intent={intent}>{idList.indexOf(n) + 1}</Tag>
     ));
   }
 
-  private createOnDeleteStepHandler = (proofId, item) => () => {
+  private createOnDeleteStepHandler = (proofId: string, item: StepData) => () => {
     const { onDelete } = this.props;
 
     onDelete(proofId, item.id, item.text, item.boxId, item.isFirstStepInBox);

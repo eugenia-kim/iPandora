@@ -12,8 +12,9 @@ export interface BoxButtonComponentProps {
   lastStepInBox: StepData;
   stepIdList: number[];
   boxId: string;
+  depth: number;
   onCreateBox: (proofId: string, boxId: string) => void;
-  onEndBox: (proofId: string, text: string, stepJust: number[], boxId: string) => void;
+  onEndBox: (proofId: string, depth: number, text: string, stepJust: number[], boxId: string) => void;
   getText: (premise: StepData, conclusion: StepData) => string;
   getJustifications: (ids: number[], premise: StepData, conclusion: StepData) => number[];
 }
@@ -44,6 +45,7 @@ export class BoxButtonComponent extends React.Component<BoxButtonComponentProps,
 
   private onEndBoxHandler = () => {
     const {
+      depth,
       firstStepInBox,
       lastStepInBox,
       stepIdList,
@@ -56,6 +58,6 @@ export class BoxButtonComponent extends React.Component<BoxButtonComponentProps,
     const text = getText(firstStepInBox, lastStepInBox);
     const stepJust = getJustifications(stepIdList, firstStepInBox, lastStepInBox);
 
-    onEndBox(proofId, text, stepJust, boxId);
+    onEndBox(proofId, depth, text, stepJust, boxId);
   }
 }
