@@ -21,6 +21,7 @@ const mapStateToProps = (state: AppState, ownProps: any) => {
 
   return {
     boxId,
+    depth: state.box.boxStack.length,
     dataList: state.step.data,
     error: state.step.error,
     firstStepInBox: state.box.firstStepMap[boxId],
@@ -43,6 +44,7 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<string>>) => {
     },
 
     onAdd: (proofId: string,
+            depth: number,
             text: string,
             givenJust: number[],
             stepJust: number[],
@@ -61,7 +63,7 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<string>>) => {
               // TODO: if not validated with Z3 grammar
               dispatch(errStep(body.text));
             } else {
-              const stepData = assign({}, body, { given_just: [], step_just: []});
+              const stepData = assign({}, body, { depth, given_just: [], step_just: []});
               dispatch(addStep(stepData));
               dispatch(assumeBox(stepData));
             }
@@ -104,13 +106,13 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<string>>) => {
           url: "http://localhost:8000/api/step/" + id + "/",
         },
         () => {
-          dispatch(deleteStep({proofId, id, text, step_just: [], given_just: [], isFirstStepInBox, boxId}));
+          dispatch(deleteStep(id));
           // TODO if isFirstStepInBox, then make box isEmpty true
         },
       );
     },
 
-    onEndBox: (proofId: string, text: string, stepJust: number[], boxId: string) => {
+    onEndBox: (proofId: string, depth: number, text: string, stepJust: number[], boxId: string) => {
       post(
         {
           form: { proofId, text, stepJust, boxId },
@@ -122,9 +124,10 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<string>>) => {
           if (response.statusCode === 400) {
             dispatch(errStep(body.text));
           } else {
-            dispatch(endBox(body));
-            dispatch(addStep(body));
-            dispatch(updateBox(body));
+            const stepData = assign({}, body, { depth });
+            dispatch(endBox(stepData));
+            dispatch(addStep(stepData));
+            dispatch(updateBox(stepData));
           }
         },
       );

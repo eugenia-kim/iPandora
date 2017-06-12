@@ -136,7 +136,7 @@ export function toShowReducer(state: InputState<InitializerData> = initInputStat
 }
 
 export function stepReducer(state: InputState<StepData> = { data: Array<StepData>(), error: "" },
-                            action: Action<StepData> | Action<StepData[]> | Action<string>) {
+                            action: Action<StepData> | Action<StepData[]> | Action<number> | Action<string>) {
   switch (action.type) {
     case actionType.SET_STEPS:
       return assign({}, state, {
@@ -157,7 +157,7 @@ export function stepReducer(state: InputState<StepData> = { data: Array<StepData
 
     case actionType.DELETE_STEP:
       return assign({}, state, {
-        data: state.data.filter(item => item.id !== (action as Action<StepData>).payload.id),
+        data: state.data.filter(item => item.id !== (action as Action<number>).payload),
       });
 
     default:

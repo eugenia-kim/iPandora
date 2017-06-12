@@ -1,3 +1,4 @@
+import * as classNames from "classnames";
 import { assign } from "lodash";
 import * as React from "react";
 
@@ -7,14 +8,9 @@ import { StepData } from "../actions/index";
 import { createImplication } from "../model/logicFormulaCreators";
 import { BoxButtonComponent } from "./BoxButtonComponent";
 
-export interface Input {
-  id: number;
-  text: string;
-  boxId: string;
-  isFirstStepInBox: boolean;
-}
 export interface StepComponentProps {
   boxId: string; // current box
+  depth: number;
   firstStepInBox: StepData;
   proofId: string;
   isFirstStepInBox: boolean; // current box
@@ -23,6 +19,7 @@ export interface StepComponentProps {
   givenIdList: number[]; // linenumber -> id
   stepIdList: number[];
   onAdd: (proofId: string,
+          depth: number,
           text: string,
           givenJust: number[],
           stepJust: number[],
@@ -30,7 +27,7 @@ export interface StepComponentProps {
           isFirstStepInBox: boolean) => void;
   onDelete: (proofId: string, id: number, text: string, boxId: string, isFirstStepInBox: boolean) => void;
   onCreateBox: (proofId: string, boxId: string) => void;
-  onEndBox: (proofId: string, text: string, stepJust: number[], boxId: string) => void;
+  onEndBox: (proofId: string, depth: number, text: string, stepJust: number[], boxId: string) => void;
   dataList: StepData[];
   error: string;
   getData: (proofId: string) => void;
@@ -66,6 +63,7 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
       onCreateBox,
       onEndBox,
       boxId,
+      depth,
       firstStepInBox,
       lastStepInBox,
       proofId,
@@ -114,6 +112,7 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
           proofId={proofId}
           stepIdList={stepIdList}
           boxId={boxId}
+          depth={depth}
           onCreateBox={onCreateBox}
           onEndBox={onEndBox}
           getText={this.getImpliesText}
@@ -127,6 +126,7 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
           proofId={proofId}
           stepIdList={stepIdList}
           boxId={boxId}
+          depth={depth}
           onCreateBox={onCreateBox}
           onEndBox={onEndBox}
           getText={this.getExistsText}
@@ -193,13 +193,13 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
   }
 
   private onAddStep = () => {
-    const { boxId, proofId, givenIdList, onAdd, stepIdList, isFirstStepInBox } = this.props;
+    const { depth, boxId, proofId, givenIdList, onAdd, stepIdList, isFirstStepInBox } = this.props;
     const { givenLines, stepLines, text } = this.state;
 
     this.setState( assign({}, this.state, { givenLines: [], stepLines: [] }) );
     const givenJust = this.getIds(givenLines, givenIdList);
     const stepJust = this.getIds(stepLines, stepIdList);
-    onAdd(proofId, text, givenJust, stepJust, boxId, isFirstStepInBox);
+    onAdd(proofId, depth, text, givenJust, stepJust, boxId, isFirstStepInBox);
   }
 
   private renderError = () => {
@@ -220,15 +220,17 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
     return dataList.map((item: StepData) =>
       (
         <div key={currentLineNumber++} className="pt-card">
-          [{currentLineNumber}] {item.text}
-          {this.assTag(item.isFirstStepInBox)}
-          {this.renderJustificationList(item.given_just, givenIdList, Intent.SUCCESS)}
-          {this.renderJustificationList(item.step_just, stepIdList, Intent.WARNING)}
-          <AnchorButton
-            className="pt-minimal"
-            iconName="delete"
-            onClick={this.createOnDeleteStepHandler(proofId, item)}
-          />
+          <div className={classNames({ indented1: item.depth === 1, indented2: item.depth === 2, indented3: item.depth === 3, indented4: item.depth === 4, indented5: item.depth === 5 })}>
+            [{currentLineNumber}] {item.text}
+            {this.assTag(item.isFirstStepInBox)}
+            {this.renderJustificationList(item.given_just, givenIdList, Intent.SUCCESS)}
+            {this.renderJustificationList(item.step_just, stepIdList, Intent.WARNING)}
+            <AnchorButton
+              className="pt-minimal"
+              iconName="delete"
+              onClick={this.createOnDeleteStepHandler(proofId, item)}
+            />
+          </div>
         </div>
       ));
   }

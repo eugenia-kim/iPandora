@@ -8,6 +8,7 @@ export interface InitializerData { // Type || Given || ToShow
 
 export interface StepData {
   id: number;
+  depth: number;
   proofId: string;
   text: string;
   given_just: number[];
@@ -127,10 +128,10 @@ export const deleteToShow = (data: InitializerData) => {
   };
 };
 
-export const deleteStep = (data: StepData) => {
+export const deleteStep = (id: number) => {
   return {
     type: type.DELETE_STEP,
-    payload: data,
+    payload: id,
   };
 };
 
