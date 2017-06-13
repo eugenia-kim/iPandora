@@ -97,7 +97,7 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<string>>) => {
               // TODO: if not validated with Z3 grammar
               dispatch(errStep(body.text));
             } else {
-              const stepData = assign({}, body, { depth, given_just: [], step_just: []});
+              const stepData = assign({}, body, { depth, givenJust: [], stepJust: []});
               dispatch(addStep(stepData));
               dispatch(assumeBox(stepData));
             }

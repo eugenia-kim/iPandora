@@ -13,8 +13,8 @@ from app.api.models.Proof import Proof
 class Step(models.Model):
     proofId = models.ForeignKey(Proof)
     text = models.CharField(max_length=300)
-    given_just = models.ManyToManyField(Given, blank=True, null=True)
-    step_just = models.ManyToManyField("self", blank=True, null=True)
+    givenJust = models.ManyToManyField(Given, blank=True, null=True)
+    stepJust = models.ManyToManyField("self", blank=True, null=True)
     boxId = models.ForeignKey(Box, blank=True, null=True)
     depth = models.IntegerField(default=0)
     isFirstStepInBox = models.BooleanField(default=False)
@@ -28,16 +28,16 @@ class Step(models.Model):
         return valid, step_builder
 
     @classmethod
-    def proof_valid(cls, step_builder, step, given_just, step_just):
-        proof_builder = Z3ProofBuilder(step_builder, step, given_just, step_just)
+    def proof_valid(cls, step_builder, step, givenJust, stepJust):
+        proof_builder = Z3ProofBuilder(step_builder, step, givenJust, stepJust)
         return proof_builder.isValid()
 
     @classmethod
-    def proof_sat(cls, step_builder, step, given_just, step_just):
-        proof_builder = Z3ProofBuilder(step_builder, step, given_just, step_just)
+    def proof_sat(cls, step_builder, step, givenJust, stepJust):
+        proof_builder = Z3ProofBuilder(step_builder, step, givenJust, stepJust)
         return proof_builder.isSat()
 
 class StepSerializer(serializers.ModelSerializer):
     class Meta:
         model = Step
-        fields = ('id', 'proofId', 'text', 'given_just', 'step_just', 'boxId', 'depth', 'isFirstStepInBox', 'exist', 'forall')
+        fields = ('id', 'proofId', 'text', 'givenJust', 'stepJust', 'boxId', 'depth', 'isFirstStepInBox', 'exist', 'forall')

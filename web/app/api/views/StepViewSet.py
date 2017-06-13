@@ -25,7 +25,7 @@ class StepViewSet(viewsets.ModelViewSet):
     def create(self, request):
         serializer = StepSerializer(data=request.data)
         logger.error(request.data)
-        logger.error(request.data.getlist('given_just'))
+        logger.error(request.data.getlist('givenJust'))
         if serializer.is_valid(raise_exception=True):
             # building types
             type_query = Type.objects.filter(proofId=request.data['proofId'])
@@ -53,17 +53,18 @@ class StepViewSet(viewsets.ModelViewSet):
 
             #checking the justifications
             proofId = request.data.get('proofId')
-            given_ids = [g for g in request.data.getlist('given_just')]
-            step_ids = [s for s in request.data.getlist('step_just')]
+            given_ids = [g for g in request.data.getlist('givenJust')]
+            step_ids = [s for s in request.data.getlist('stepJust')]
             # building proof
-            given_just = [Given.objects.get(id=g, proofId=proofId).text for g in given_ids]
-            step_just = [Step.objects.get(id=s, proofId=proofId).text for s in step_ids]
+            givenJust = [Given.objects.get(id=g, proofId=proofId).text for g in given_ids]
+            stepJust = [Step.objects.get(id=s, proofId=proofId).text for s in step_ids]
 
-            logger.error(given_just)
-            logger.error(step_just)
+            print("GETTING THE JUSTIFICATIONS")
+            logger.error(givenJust)
+            logger.error(stepJust)
 
             try:
-                proof_valid = Step.proof_valid(step_builder, serializer.validated_data['text'], given_just, step_just)
+                proof_valid = Step.proof_valid(step_builder, serializer.validated_data['text'], givenJust, stepJust)
             except Exception as err:
                 raise Z3Exception(err, 'text', status.HTTP_400_BAD_REQUEST)
 
@@ -75,7 +76,7 @@ class StepViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data, status=status.HTTP_200_OK)
 
             #print(proof_valid)
-            print(Step.proof_sat(step_builder, serializer.validated_data['text'], given_just, step_just))
+            print(Step.proof_sat(step_builder, serializer.validated_data['text'], givenJust, stepJust))
 
             raise Z3Exception('Proof is not Valid', 'text', status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

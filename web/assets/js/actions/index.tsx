@@ -12,8 +12,8 @@ export interface StepData {
   depth: number;
   proofId: string;
   text: string;
-  given_just: number[];
-  step_just: number[];
+  givenJust: number[];
+  stepJust: number[];
   boxId: string;
   isFirstStepInBox: boolean;
   exist: boolean;

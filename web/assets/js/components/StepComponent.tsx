@@ -240,8 +240,8 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
           <div className={classes}>
             [{currentLineNumber}] {item.text}
             {this.assTag(item.isFirstStepInBox)}
-            {this.renderJustificationList(item.given_just, givenIdList, Intent.SUCCESS)}
-            {this.renderJustificationList(item.step_just, stepIdList, Intent.WARNING)}
+            {this.renderJustificationList(item.givenJust, givenIdList, Intent.SUCCESS)}
+            {this.renderJustificationList(item.stepJust, stepIdList, Intent.WARNING)}
             <AnchorButton
               className="pt-minimal"
               iconName="delete"
