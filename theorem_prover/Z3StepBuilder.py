@@ -12,7 +12,7 @@ from error.folSyntaxErrorListener import folSyntaxErrorListener
 
 class Z3StepBuilder(folVisitor):
 
-    def __init__(self, param_map = None, predicate_map = None):
+    def __init__(self, param_map = None, predicate_map = None, quantifier = dict()):
 
         # proposition_map = [proposition_name, z3 Bool]
         self.proposition_map = dict()
@@ -29,6 +29,12 @@ class Z3StepBuilder(folVisitor):
 
         # constant_map = [term_name, z3 sort] (unbounded)
         self.constant_map = dict()
+
+        self.__first_token = True
+
+        self.quantifier = quantifier
+        self.quantifier['exist'] = False
+        self.quantifier['forall'] = False
 
     # Visit a parse tree produced by folParser#step.
     def visitStep(self, ctx: folParser.StepContext):
@@ -55,11 +61,18 @@ class Z3StepBuilder(folVisitor):
         if ctx.FORALL():
             term = self.var_map.get(ctx.VARIABLE().getText()[1:])
             self.var_map.pop(ctx.VARIABLE().getText()[1:])
+            if self.__first_token:
+                self.quantifier['forall'] = True
+            self.__first_token = False
             return ForAll(term, children)
             # return "ForAll(" + ctx.VARIABLE().getText()[1:] + ", " + children + ")"
         elif ctx.EXISTS():
             term = self.var_map.get(ctx.VARIABLE().getText()[1:])
             self.var_map.pop(ctx.VARIABLE().getText()[1:])
+
+            if self.__first_token:
+                self.quantifier['exist'] = True
+            self.__first_token = False
             return Exists(term, children)
             #return "Exists(" + ctx.VARIABLE().getText()[1:] + ", " + children + ")"
         else:
@@ -100,6 +113,7 @@ class Z3StepBuilder(folVisitor):
 
     def visitNegation(self, ctx: folParser.NegationContext):
         print("Negation")
+        first_token = self.__first_token
         children = None
         if ctx.formula():
             children = self.visit(ctx.formula())
@@ -108,6 +122,10 @@ class Z3StepBuilder(folVisitor):
         if ctx.NOT() is None:
             return children
         else:
+            if first_token and (self.quantifier.get('exist') or self.quantifier.get('forall')):
+                self.quantifier['exist'] = not self.quantifier.get('exist')
+                self.quantifier['forall'] = not self.quantifier.get('forall')
+
             # return "Not(" + children + ")"
             return Not(children)
 

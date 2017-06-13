@@ -10,6 +10,7 @@ import { BoxButtonComponent } from "./BoxButtonComponent";
 
 export interface StepComponentProps {
   boxId: string; // current box
+  boxType: string; // current box
   depth: number;
   firstStepInBox: StepData;
   proofId: string;
@@ -26,7 +27,7 @@ export interface StepComponentProps {
           boxId: string,
           isFirstStepInBox: boolean) => void;
   onDelete: (proofId: string, id: number, text: string, boxId: string, isFirstStepInBox: boolean) => void;
-  onCreateBox: (proofId: string, boxId: string) => void;
+  onCreateBox: (proofId: string, boxId: string, type: string) => void;
   onEndBox: (proofId: string, depth: number, text: string, stepJust: number[], boxId: string) => void;
   dataList: StepData[];
   error: string;
@@ -63,6 +64,7 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
       onCreateBox,
       onEndBox,
       boxId,
+      boxType,
       depth,
       firstStepInBox,
       lastStepInBox,
@@ -110,12 +112,13 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
         {this.renderDataList()}
 
         <BoxButtonComponent
-          type="-> I"
+          type="I"
           firstStepInBox={firstStepInBox}
           lastStepInBox={lastStepInBox}
           proofId={proofId}
           stepIdList={stepIdList}
           boxId={boxId}
+          boxType={boxType}
           depth={depth}
           onCreateBox={onCreateBox}
           onEndBox={onEndBox}
@@ -124,12 +127,13 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
         />
 
         <BoxButtonComponent
-          type="Exist E"
+          type="E"
           firstStepInBox={firstStepInBox}
           lastStepInBox={lastStepInBox}
           proofId={proofId}
           stepIdList={stepIdList}
           boxId={boxId}
+          boxType={boxType}
           depth={depth}
           onCreateBox={onCreateBox}
           onEndBox={onEndBox}

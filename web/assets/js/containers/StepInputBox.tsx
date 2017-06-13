@@ -6,6 +6,7 @@ import { del, get, post } from "request";
 import {
   addStep,
   assumeBox,
+  BoxData,
   createBox,
   deleteStep,
   endBox,
@@ -19,14 +20,15 @@ import { StepComponent } from "../components/StepComponent";
 import { Action, AppState } from "../reducers/index";
 
 const getBoxes = (steps: StepData[]) => {
-  const boxesStack = Array<string>();
+  const boxesStack = Array<BoxData>();
   const firstStepMap: { [boxId: string]: StepData } = {};
 
   let lastStep: StepData;
   let lastStepDepth = 0;
 
   steps.forEach(step => {
-    boxesStack[step.depth] = step.boxId;
+    const type = (step.exist && "E") || (step.forall && "A") || "I";
+    boxesStack[step.depth] = assign({}, { id: step.boxId, parentId: null, proofId: step.proofId, type });
     lastStepDepth = step.depth;
 
     lastStep = step;
@@ -45,10 +47,13 @@ const getBoxes = (steps: StepData[]) => {
 };
 
 const mapStateToProps = (state: AppState, ownProps: any) => {
-  const boxId = last(state.box.boxStack);
+  const currentBox = last(state.box.boxStack);
+  const boxId = (currentBox && currentBox.id) || null;
+  const boxType = (currentBox && currentBox.type) || null;
 
   return {
-    boxId,
+    boxId: boxId,
+    boxType: boxType,
     depth: state.box.boxStack.length,
     dataList: state.step.data,
     error: state.step.error,
@@ -120,9 +125,9 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<string>>) => {
       }
     },
 
-    onCreateBox: (proofId: string, boxId: string) => {
+    onCreateBox: (proofId: string, boxId: string, type: string) => {
       post(
-        {json: true, url: "http://localhost:8000/api/box/", form: {proofId, parentId: boxId}},
+        {json: true, url: "http://localhost:8000/api/box/", form: {proofId, parentId: boxId, type }},
         (error, response, body) => {
           dispatch(createBox(body));
         });

@@ -13,7 +13,7 @@ export interface AppState {
 }
 
 export interface BoxState {
-  boxStack: string[];
+  boxStack: BoxData[];
   firstStepMap: { [boxId: string]: StepData };
   isEmpty: boolean;
   lastStep: StepData;
@@ -174,7 +174,7 @@ export function boxReducer(state: BoxState = initBoxState,
 
     case actionType.CREATE_BOX:
       return assign({}, state, {
-        boxStack: [...state.boxStack, (action as Action<BoxData>).payload.id],
+        boxStack: [...state.boxStack, (action as Action<BoxData>).payload],
         isEmpty: true,
         proofId: (action as Action<BoxData>).payload.proofId,
       });

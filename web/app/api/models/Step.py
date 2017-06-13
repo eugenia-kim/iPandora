@@ -18,10 +18,12 @@ class Step(models.Model):
     boxId = models.ForeignKey(Box, blank=True, null=True)
     depth = models.IntegerField(default=0)
     isFirstStepInBox = models.BooleanField(default=False)
+    exist = models.BooleanField(default=False)
+    forall = models.BooleanField(default=False)
 
     @classmethod
-    def z3_valid(cls, step, param_map, predicate_map):
-        step_builder = Z3StepBuilder(param_map, predicate_map)
+    def z3_valid(cls, step, param_map, predicate_map, quantifier):
+        step_builder = Z3StepBuilder(param_map, predicate_map, quantifier)
         valid, _ = step_builder.visitInput(step)
         return valid, step_builder
 
@@ -38,4 +40,4 @@ class Step(models.Model):
 class StepSerializer(serializers.ModelSerializer):
     class Meta:
         model = Step
-        fields = ('id', 'proofId', 'text', 'given_just', 'step_just', 'boxId', 'depth', 'isFirstStepInBox')
+        fields = ('id', 'proofId', 'text', 'given_just', 'step_just', 'boxId', 'depth', 'isFirstStepInBox', 'exist', 'forall')

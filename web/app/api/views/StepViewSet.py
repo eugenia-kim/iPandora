@@ -35,8 +35,9 @@ class StepViewSet(viewsets.ModelViewSet):
                 raise Z3Exception('Type Declarations Error', 'text', status.HTTP_400_BAD_REQUEST)
             print("BUILDING STEP NOW")
             # building step
+            quantifier = dict()
             try:
-                step_valid, step_builder = Step.z3_valid(serializer.validated_data['text'], param_map, predicate_map)
+                step_valid, step_builder = Step.z3_valid(serializer.validated_data['text'], param_map, predicate_map, quantifier)
                 print(step_valid)
             except Exception as err:
                 raise Z3Exception(err, 'text', status.HTTP_400_BAD_REQUEST)
@@ -45,6 +46,8 @@ class StepViewSet(viewsets.ModelViewSet):
                 raise Z3Exception('Syntax Error', 'text', status.HTTP_400_BAD_REQUEST)
             elif serializer.validated_data['isFirstStepInBox']:
                 # Assumption
+                serializer.validated_data['exist'] = quantifier.get('exist')
+                serializer.validated_data['forall'] = quantifier.get('forall')
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -65,7 +68,10 @@ class StepViewSet(viewsets.ModelViewSet):
                 raise Z3Exception(err, 'text', status.HTTP_400_BAD_REQUEST)
 
             if proof_valid:
+                serializer.validated_data['exist'] = quantifier.get('exist')
+                serializer.validated_data['forall'] = quantifier.get('forall')
                 instance = serializer.save()
+                logger.error(serializer.data)
                 return Response(serializer.data, status=status.HTTP_200_OK)
 
             #print(proof_valid)

@@ -16,12 +16,15 @@ export interface StepData {
   step_just: number[];
   boxId: string;
   isFirstStepInBox: boolean;
+  exist: boolean;
+  forall: boolean;
 }
 
 export interface BoxData {
   id: string;
   proofId: string;
   parentId: string;
+  type: string;
 }
 
 export const setBoxes = (boxState: BoxState) => {

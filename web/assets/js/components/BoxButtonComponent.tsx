@@ -12,8 +12,9 @@ export interface BoxButtonComponentProps {
   lastStepInBox: StepData;
   stepIdList: number[];
   boxId: string;
+  boxType: string;
   depth: number;
-  onCreateBox: (proofId: string, boxId: string) => void;
+  onCreateBox: (proofId: string, boxId: string, type: string) => void;
   onEndBox: (proofId: string, depth: number, text: string, stepJust: number[], boxId: string) => void;
   getText: (premise: StepData, conclusion: StepData) => string;
   getJustifications: (ids: number[], premise: StepData, conclusion: StepData) => number[];
@@ -21,26 +22,29 @@ export interface BoxButtonComponentProps {
 
 export class BoxButtonComponent extends React.Component<BoxButtonComponentProps, void> {
   render() {
-    const { type } = this.props;
-
+    const { type, boxType, lastStepInBox } = this.props;
+    const typeName = this.getType(type);
     return(
       <div>
         <Button
-          text={"Begin " + type}
+          disabled={this.disableButton(type, lastStepInBox)}
+          text={"Begin " + typeName}
           onClick={this.onCreateBoxHandler}
         />
-        <Button
-          text={"End " + type}
+        {
+          (boxType === type) &&  <Button
+          text={"End " + typeName}
           onClick={this.onEndBoxHandler}
-        />
+          />
+        }
       </div>
     );
   }
 
   private onCreateBoxHandler = () => {
-    const { boxId, proofId, onCreateBox } = this.props;
+    const { boxId, proofId, onCreateBox, type } = this.props;
 
-    onCreateBox(proofId, boxId);
+    onCreateBox(proofId, boxId, type);
   }
 
   private onEndBoxHandler = () => {
@@ -59,5 +63,39 @@ export class BoxButtonComponent extends React.Component<BoxButtonComponentProps,
     const stepJust = getJustifications(stepIdList, firstStepInBox, lastStepInBox);
 
     onEndBox(proofId, depth, text, stepJust, boxId);
+  }
+
+  private disableButton = (type: string, lstStep: StepData) => {
+    switch (type) {
+      case "I": {
+        return false;
+      }
+      case "E": {
+        return !(!lstStep || (lstStep && lstStep.exist));
+      }
+      case "A": {
+        return !(!lstStep || (lstStep && lstStep.forall));
+      }
+      default: {
+        return true;
+      }
+    }
+  }
+
+  private getType = (type: string) => {
+    switch (type) {
+      case "I": {
+        return "Implication";
+      }
+      case "E": {
+        return "Exist";
+      }
+      case "A": {
+        return "ForAll";
+      }
+      default: {
+        return "";
+      }
+    }
   }
 }
