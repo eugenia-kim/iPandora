@@ -71,10 +71,10 @@ export class BoxButtonComponent extends React.Component<BoxButtonComponentProps,
         return false;
       }
       case "E": {
-        return !(!lstStep || (lstStep && lstStep.exist));
+        return !lstStep || (lstStep && !lstStep.exist);
       }
       case "A": {
-        return !(!lstStep || (lstStep && lstStep.forall));
+        return !lstStep || (lstStep && !lstStep.forall);
       }
       default: {
         return true;
