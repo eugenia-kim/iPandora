@@ -48,6 +48,11 @@ class Z3StepBuilder(folVisitor):
              AFTER I visit the implication.            
              DFS so I need to remove the var after retrieving
         '''
+        if ctx.TRUE():
+            return True
+        elif ctx.FALSE():
+            return False
+
         if ctx.VARIABLE():
             term = self.var_map.get(ctx.VARIABLE().getText()[1:])
             if term:

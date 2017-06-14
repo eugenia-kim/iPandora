@@ -36,7 +36,7 @@ step
 ;
 
 formula
-: ((FORALL | EXISTS) VARIABLE)? implication
+: (TRUE | FALSE) | (((FORALL | EXISTS) VARIABLE)? implication)
 ;
 
 implication
@@ -76,6 +76,14 @@ function
 
 functionTuple
 : LPAREN (CONSTANT | VARIABLE) (',' (CONSTANT | VARIABLE))* RPAREN
+;
+
+TRUE
+: 'True'
+;
+
+FALSE
+: 'False'
 ;
 
 LPAREN
