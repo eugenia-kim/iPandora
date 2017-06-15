@@ -9,11 +9,15 @@ init
 ;
 
 declaration
-: PREPOSITION ':' predicateType
+: PREPOSITION ':' (predicateType | functionType)
 ;
 
 predicateType
 : (sort ('x' sort)* '->')? BOOL
+;
+
+functionType
+: (sort ('x' sort)* '->')? sort
 ;
 
 PREPOSITION

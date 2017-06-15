@@ -28,27 +28,36 @@ class Z3TypeBuilder(folTypeVisitor):
         #print("visitInit")
         for d in ctx.declaration():
             self.visit(d)
-        #for k, v in self.predicate_map.items():
-        #    print("key and val")
-        #    print(k, v)
+        for k, v in self.param_map.items():
+            print("key and val")
+            print(k, v)
 
     # Visit a parse tree produced by folTypeParser#declaration.
     def visitDeclaration(self, ctx: folTypeParser.DeclarationContext):
         #print("visitDeclaration")
         declaration = self.predicate_map.get(ctx.PREPOSITION().getText())
         if declaration is None:
-            children = self.visit(ctx.predicateType())
-            self.param_map[ctx.PREPOSITION().getText()] = children
-            # append BoolSort() after putting in param_map
-            children.append(BoolSort())
-            # print(children)
-            declaration = Function(ctx.PREPOSITION().getText(), *children)
+            if ctx.predicateType():
+                children = self.visit(ctx.predicateType())
+                self.param_map[ctx.PREPOSITION().getText()] = children
+                # append BoolSort() after putting in param_map
+                children.append(BoolSort())
+                # print(children)
+                declaration = Function(ctx.PREPOSITION().getText(), *children)
+            elif ctx.functionType():
+                children = self.visit(ctx.functionType())
+                self.param_map[ctx.PREPOSITION().getText()] = children
+                declaration = Function(ctx.PREPOSITION().getText(), *children)
             self.predicate_map[ctx.PREPOSITION().getText()] = declaration
         return declaration
 
     # Visit a parse tree produced by folTypeParser#predicateType.
     def visitPredicateType(self, ctx: folTypeParser.PredicateTypeContext):
         print("visitPredicateType")
+        return list(map((lambda s: self.visit(s)), ctx.sort()))
+
+    # Visit a parse tree produced by folTypeParser#functionType.
+    def visitFunctionType(self, ctx: folTypeParser.FunctionTypeContext):
         return list(map((lambda s: self.visit(s)), ctx.sort()))
 
     # Visit a parse tree produced by folTypeParser#sort.
@@ -59,11 +68,9 @@ class Z3TypeBuilder(folTypeVisitor):
         elif ctx.BOOL():
             return BoolSort()
         else:
-            print("ENTERED ELSE")
             type = self.__type_map.get(ctx.TYPE().getText()[1:])
             print(type)
             if type is None:
-                print("TYPE WAS NONE")
                 blabla = ctx.TYPE().getText()[1:]
                 print("We got blbafs")
                 print(blabla)
