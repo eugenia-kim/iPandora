@@ -7,7 +7,7 @@ import {
   addStep,
   assumeBox,
   BoxData,
-  createBox,
+  createBox, createForAllBox,
   deleteStep,
   endBox,
   errStep,
@@ -18,6 +18,7 @@ import {
 } from "../actions/index";
 import { StepComponent } from "../components/StepComponent";
 import { Action, AppState } from "../reducers/index";
+import { replaceConstWithVar } from "../model/logicFormulaCreators";
 
 const getBoxes = (steps: StepData[]) => {
   const boxesStack = Array<BoxData>();
@@ -39,11 +40,62 @@ const getBoxes = (steps: StepData[]) => {
   });
 
   return {
-    boxStack: take(boxesStack, lastStepDepth),
+    boxStack: take(boxesStack, lastStepDepth + 1),
     firstStepMap,
     isEmpty: false,
     lastStep,
   };
+};
+
+const addNonZ3Formula = (dispatch: Dispatch<Action<string>>,
+                         proofId: string,
+                         depth: number,
+                         text: string,
+                         boxId: string,
+                         isZ3Formula: boolean,
+                         isFirstStepInBox: boolean) => {
+  post(
+    {
+      form: { proofId, depth, text, boxId, isZ3Formula, isFirstStepInBox },
+      json: true,
+      url: "http://localhost:8000/api/step/",
+    },
+    (error, response, body) => {
+      if (response.statusCode === 400) {
+        dispatch(errStep(body.text));
+      } else {
+        const stepData = assign({}, body, { givenJust: [], stepJust: []});
+        dispatch(addStep(stepData));
+        dispatch(assumeBox(stepData));
+      }
+    },
+  );
+};
+
+const postEndForAllBox = (dispatch: Dispatch<Action<string>>,
+                          proofId: string,
+                          depth: number,
+                          text: string,
+                          boxId: string,
+                          stepJust: number[]) => {
+  post(
+    {
+      form: { proofId, depth, text, boxId, skipProof: true, stepJust },
+      json: true,
+      url: "http://localhost:8000/api/step/",
+      qsStringifyOptions: { arrayFormat: "repeat" },
+    },
+    (error, response, body) => {
+      if (response.statusCode === 400) {
+        dispatch(errStep(body.text));
+      } else {
+        const stepData = assign({}, body, { depth, stepJust });
+        dispatch(endBox(stepData));
+        dispatch(addStep(stepData));
+        dispatch(updateBox(stepData));
+      }
+    },
+  );
 };
 
 const mapStateToProps = (state: AppState, ownProps: any) => {
@@ -52,8 +104,8 @@ const mapStateToProps = (state: AppState, ownProps: any) => {
   const boxType = (currentBox && currentBox.type) || null;
 
   return {
-    boxId: boxId,
-    boxType: boxType,
+    boxId,
+    boxType,
     depth: state.box.boxStack.length,
     dataList: state.step.data,
     error: state.step.error,
@@ -117,8 +169,8 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<string>>) => {
               dispatch(errStep(body.text));
             } else {
               // not assumption
-              dispatch(addStep(body));
-              dispatch(updateBox(body));
+              dispatch(addStep(assign(body, { stepJust })));
+              dispatch(updateBox(assign(body, { stepJust })));
             }
           },
         );
@@ -130,6 +182,25 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<string>>) => {
         {json: true, url: "http://localhost:8000/api/box/", form: {proofId, parentId: boxId, type }},
         (error, response, body) => {
           dispatch(createBox(body));
+        });
+    },
+
+    onCreateForAllBox: (proofId: string,
+                        depth: number,
+                        boxId: string,
+                        type: string,
+                        variable: string,
+                        constant: string,) => {
+      const text = "Take arbitrary " + constant;
+      post(
+        {
+          json: true,
+          url: "http://localhost:8000/api/forallBox/",
+          form: { proofId, boxId, type, variable, constant },
+        },
+        (error, response, body) => {
+          dispatch(createBox(body));
+          addNonZ3Formula(dispatch, proofId, depth + 1, text, body.id, false, true);
         });
     },
 
@@ -169,6 +240,23 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<string>>) => {
             dispatch(addStep(stepData));
             dispatch(updateBox(stepData));
           }
+        },
+      );
+    },
+
+    onEndForAllBox: (proofId: string, depth: number, text: string, boxId: string, stepJust: number[] ) => {
+      get(
+        {
+          json: true,
+          qs: { boxId },
+          url: "http://localhost:8000/api/forallBox/",
+        },
+        (error, response, body) => {
+          const variable = body.variable;
+          const constant = body.constant;
+          const newText = replaceConstWithVar(text, variable, constant);
+
+          postEndForAllBox(dispatch, proofId, depth - 1, newText, boxId, stepJust);
         },
       );
     },

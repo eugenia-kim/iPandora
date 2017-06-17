@@ -179,6 +179,13 @@ export function boxReducer(state: BoxState = initBoxState,
         proofId: (action as Action<BoxData>).payload.proofId,
       });
 
+    case actionType.CREATE_FORALL_BOX:
+      return assign({}, state, {
+        boxStack: [...state.boxStack, (action as Action<BoxData>).payload],
+        isEmpty: false,
+        proofId: (action as Action<BoxData>).payload.proofId,
+      });
+
     case actionType.ASSUME_BOX:
       const typedAction = action as Action<StepData>;
       const boxId = typedAction.payload.boxId;

@@ -20,6 +20,7 @@ export const DELETE_STEP = "DELETE_STEP";
 
 export const SET_BOXES = "SET_BOXES";
 export const CREATE_BOX = "CREATE_BOX";
+export const CREATE_FORALL_BOX = "CREATE_FORALL_BOX";
 export const UPDATE_BOX = "UPDATE_BOX";
 export const ASSUME_BOX = "ASSUME_BOX";
 export const END_BOX = "END_BOX";

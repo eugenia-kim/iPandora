@@ -173,3 +173,11 @@ export const endBox = (data: StepData) => {
     payload: data, // not used though
   };
 };
+
+export const createForAllBox = (data: BoxData) => {
+  return {
+    type: type.CREATE_FORALL_BOX,
+    payload: data,
+  };
+};
+

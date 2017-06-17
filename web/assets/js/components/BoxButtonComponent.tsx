@@ -33,8 +33,8 @@ export class BoxButtonComponent extends React.Component<BoxButtonComponentProps,
         />
         {
           (boxType === type) &&  <Button
-          text={"End " + typeName}
-          onClick={this.onEndBoxHandler}
+            text={"End " + typeName}
+            onClick={this.onEndBoxHandler}
           />
         }
       </div>
@@ -73,9 +73,6 @@ export class BoxButtonComponent extends React.Component<BoxButtonComponentProps,
       case "E": {
         return !lstStep || (lstStep && !lstStep.exist);
       }
-      case "A": {
-        return !lstStep || (lstStep && !lstStep.forall);
-      }
       default: {
         return true;
       }
@@ -89,9 +86,6 @@ export class BoxButtonComponent extends React.Component<BoxButtonComponentProps,
       }
       case "E": {
         return "Exist";
-      }
-      case "A": {
-        return "ForAll";
       }
       default: {
         return "";

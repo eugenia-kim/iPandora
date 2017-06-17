@@ -14,12 +14,14 @@ class Step(models.Model):
     proofId = models.ForeignKey(Proof)
     text = models.CharField(max_length=300)
     givenJust = models.ManyToManyField(Given, blank=True, null=True)
-    stepJust = models.ManyToManyField("self", blank=True, null=True)
+    #stepJust = models.ManyToManyField("self", blank=True, null=True)
     boxId = models.ForeignKey(Box, blank=True, null=True)
     depth = models.IntegerField(default=0)
     isFirstStepInBox = models.BooleanField(default=False)
     exist = models.BooleanField(default=False)
     forall = models.BooleanField(default=False)
+    isZ3Formula = models.BooleanField(default=True)
+    skipProof = models.BooleanField(default=False)
 
     @classmethod
     def z3_valid(cls, step, param_map, predicate_map, quantifier):
@@ -40,4 +42,5 @@ class Step(models.Model):
 class StepSerializer(serializers.ModelSerializer):
     class Meta:
         model = Step
-        fields = ('id', 'proofId', 'text', 'givenJust', 'stepJust', 'boxId', 'depth', 'isFirstStepInBox', 'exist', 'forall')
+        extra_kwargs = {'isZ3Formula': {'default': True}} # this is due to Django bug not recognising the default value
+        fields = ('id', 'proofId', 'text', 'givenJust', 'boxId', 'depth', 'isFirstStepInBox', 'exist', 'forall', 'isZ3Formula', 'skipProof')

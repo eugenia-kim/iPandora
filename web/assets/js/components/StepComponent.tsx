@@ -7,6 +7,7 @@ import { AnchorButton, Button, InputGroup, Intent, NumericInput, Position, Tag, 
 import { StepData } from "../actions/index";
 import { createImplication } from "../model/logicFormulaCreators";
 import { BoxButtonComponent } from "./BoxButtonComponent";
+import { ForAllButtonComponent } from "./ForAllButtonComponent";
 
 export interface StepComponentProps {
   boxId: string; // current box
@@ -29,6 +30,17 @@ export interface StepComponentProps {
   onDelete: (proofId: string, id: number, text: string, boxId: string, isFirstStepInBox: boolean) => void;
   onCreateBox: (proofId: string, boxId: string, type: string) => void;
   onEndBox: (proofId: string, depth: number, text: string, stepJust: number[], boxId: string) => void;
+  onCreateForAllBox: (proofId: string,
+                      depth: number,
+                      boxId: string,
+                      type: string,
+                      variable: string,
+                      constant: string) => void;
+  onEndForAllBox: (proofId: string,
+                   depth: number,
+                   text: string,
+                   boxId: string,
+                   stepJust: number[]) => void;
   dataList: StepData[];
   error: string;
   getData: (proofId: string) => void;
@@ -63,10 +75,13 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
       inputType,
       onCreateBox,
       onEndBox,
+      onCreateForAllBox,
+      onEndForAllBox,
       boxId,
       boxType,
       depth,
       firstStepInBox,
+      isFirstStepInBox,
       lastStepInBox,
       proofId,
       stepIdList,
@@ -141,6 +156,16 @@ export class StepComponent extends React.Component<StepComponentProps, StepCompo
           getJustifications={this.getExistsJustifications}
         />
 
+        <ForAllButtonComponent
+          firstStepInBox={firstStepInBox}
+          lastStepInBox={lastStepInBox}
+          proofId={proofId}
+          boxId={boxId}
+          boxType={boxType}
+          depth={depth}
+          onCreateForAllBox={onCreateForAllBox}
+          onEndForAllBox={onEndForAllBox}
+        />
       </div>
     );
   }
