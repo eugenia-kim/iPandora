@@ -235,7 +235,7 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<string>>) => {
           if (response.statusCode === 400) {
             dispatch(errStep(body.text));
           } else {
-            const stepData = assign({}, body, { depth: depth - 1 });
+            const stepData = assign({}, body, { depth: depth - 1, stepJust });
             dispatch(endBox(stepData));
             dispatch(addStep(stepData));
             dispatch(updateBox(stepData));
