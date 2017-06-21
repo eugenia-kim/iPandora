@@ -6,7 +6,7 @@ export const replaceConstWithVar = (text: string, variable: string, constant: st
   console.error(text);
   console.error(variable);
   console.error(constant);
-  const newText = text.replace(constant, "?" + variable);
+  const newText = text.replace(new RegExp(constant, "g"), "?" + variable);
   return "Forall ?" + variable + "(" + newText + ")";
 
 };

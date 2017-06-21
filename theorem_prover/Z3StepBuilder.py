@@ -54,11 +54,13 @@ class Z3StepBuilder(folVisitor):
             return False
 
         if ctx.VARIABLE():
-            term = self.var_map.get(ctx.VARIABLE().getText()[1:])
+            term = self.var_map.get(ctx.VARIABLE().getText()[1:], None)
             if term:
+                print("VAR: " + ctx.VARIABLE().getText())
                 # TODO: throw an error (bad practice to have the same bounded variable name in between levels of scopes
                 raise Exception("Bad practice to have the same bounded variable name in between levels of scope: " + ctx.VARIABLE.getText()[1:])
             else:
+                print("VAR: None")
                 self.var_map[ctx.VARIABLE().getText()[1:]] = unknown
 
         children = self.visit(ctx.implication())
@@ -101,7 +103,7 @@ class Z3StepBuilder(folVisitor):
             return self.visit(ctx.conjunction(0))
         else:
             print("yes |")
-            conjunction_list = map((lambda c: self.visit(c)), ctx.conjunction())
+            conjunction_list = list(map((lambda c: self.visit(c)), ctx.conjunction()))
             #return "Or(" + reduce((lambda a, b: a + ", " + b), conjunction_list) + ")"
             return Or(*conjunction_list)
 
@@ -148,10 +150,14 @@ class Z3StepBuilder(folVisitor):
             # Predicate Tuple type
 
             # get z3 parameter types
-            param_type = self.param_map.get(ctx.PREPOSITION().getText())
+            param_type = self.param_map.get(ctx.PREPOSITION().getText(), None)
+            if param_type is None:
+                raise Exception("Type declarations for " + ctx.PREPOSITION().getText() + " should be provided")
 
             # get z3 predicate function
-            predicate = self.predicate_map.get(ctx.PREPOSITION().getText())
+            predicate = self.predicate_map.get(ctx.PREPOSITION().getText(), None)
+            if predicate is None:
+                raise Exception("Type declarations for " + ctx.PREPOSITION().getText() + " should be provided")
 
             # get z3 model
             z3_consts = list(map((lambda t: Const(t[0], t[1])), zip(tuple, param_type)))
