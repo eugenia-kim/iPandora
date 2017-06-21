@@ -219,7 +219,7 @@ class Z3StepBuilder(folVisitor):
                 if const == z3:
                     pass
             except Exception:
-                raise Exception("Type Error... Found: " + str(z3.sort()) + ", Expected: " + str(const.sort()))
+                raise Exception("Type Error... Found: " + str(const.sort()) + ", Expected: " + str(z3t .sort()))
             pass
 
         '''
