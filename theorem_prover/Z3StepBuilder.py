@@ -214,6 +214,7 @@ class Z3StepBuilder(folVisitor):
         elif const is unknown:
             print("Constant is in the map: " + name)
             self.constant_map[name] = z3
+        elif const is not unknown and const == z3:
             pass
         '''
         This seems like it will be dealt by Z3 Exception
