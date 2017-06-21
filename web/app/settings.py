@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'webpack_loader',
     'rest_framework',
     'rest_framework_swagger',
+    'django_extensions',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -120,5 +121,10 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
     )
+}
+
+GRAPH_MODELS = {
+    'all_application' : True,
+    'group_models': True,
 }
 

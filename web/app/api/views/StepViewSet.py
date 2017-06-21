@@ -7,7 +7,7 @@ from rest_framework.decorators import authentication_classes
 from rest_framework.authentication import BasicAuthentication
 
 from app.api.csrf import CsrfExemptSessionAuthentication
-from app.api.models.Justification import Justification, JustificationSerializer
+from app.api.models.Justification import StepJustification, StepJustificationSerializer
 from app.api.models.Step import Step, StepSerializer
 from app.api.models.Given import Given, GivenSerializer
 from app.api.models.Types import Type, TypeSerializer
@@ -106,13 +106,13 @@ class StepViewSet(viewsets.ModelViewSet):
         justification = dict()
         justification['step'] = stepId
         justification['justification'] = justificationId
-        serializer = JustificationSerializer(data=justification)
+        serializer = StepJustificationSerializer(data=justification)
         if serializer.is_valid(raise_exception=True):
             print("IN IF NOW")
             serializer.save()
 
     def __getJustificationIdList(self, stepId):
-        return map(lambda obj: obj.justification.id, Justification.objects.filter(step=stepId))
+        return map(lambda obj: obj.justification.id, StepJustification.objects.filter(step=stepId))
 
     def __addStepJustInResponse(self, data, stepJust):
         responseData = data.copy()

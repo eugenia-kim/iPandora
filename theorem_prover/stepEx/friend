@@ -1,0 +1,1 @@
+Forall ?x(Forall ?y(Friend(?x, ?y)) -> Happy(?x))

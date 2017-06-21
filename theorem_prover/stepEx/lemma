@@ -1,0 +1,1 @@
+(Forall ?y Friend(x1, ?y)) | !(Forall ?y Friend(x1, ?y))
