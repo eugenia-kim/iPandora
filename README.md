@@ -1,3 +1,6 @@
+Django webpack loader + hot-reload codebase is taken from
+https://github.com/ezhome/django-webpack-loader/tree/master/examples/hot-reload
+
 # iPandora
 
 source activate ipandora
